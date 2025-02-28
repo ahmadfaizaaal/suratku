@@ -11,6 +11,7 @@ class M_User extends CI_Model
     }
 
     public function getListUsers() {
+        $this->db->order_by("id_user", "ASC");
         $query = $this->db->get(TBL_USER);
         return $query->result();
     }

@@ -113,7 +113,7 @@
                                 <div class="form-group row align-items-center">
                                     <label class="col-md-3 label-control" for="tipeuser_profile">Tipe Pengguna</label>
                                     <div class="col-md-9">
-                                        <input type="text" id="tipeuser_profile" class="form-control required" placeholder="" name="tipeuser_profile" value="<?= $userLogin->jabat; ?>" disabled>
+                                        <input type="text" id="tipeuser_profile" class="form-control required" placeholder="" name="tipeuser_profile" value="<?= $userLogin->jabatan; ?>" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">

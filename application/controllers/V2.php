@@ -30,9 +30,9 @@ class V2 extends CI_Controller
                         'id_instansi' => $userLogin->id_instansi,
                         'username' => $userLogin->username,
                         'nama' => $userLogin->nama,
-                        'jabatan' => $userLogin->jabat,
+                        'jabatan' => $userLogin->jabatan,
                         'image' => $userLogin->img_profile,
-                        'role' => $userLogin->admin,
+                        'role' => $userLogin->role,
                         'last_time_login' => time()
                     ];
                     $this->session->set_userdata($data);
@@ -201,6 +201,7 @@ class V2 extends CI_Controller
 				break;
 			case "users":
                 $data = $this->initiateUserProfileData();
+                $data['users'] = $this->user->getListUsers();
                 load_page('pages/users_list', SYS_NAME, $data);
                 break;
             case "app":
@@ -226,7 +227,7 @@ class V2 extends CI_Controller
         $userLogin = $this->user->getDataUser($username);
 
         if ($userLogin) {
-            $role = $userLogin->admin;
+            $role = $userLogin->role;
             // $user = array(
             //     'password' => password_hash($password, PASSWORD_DEFAULT)
             // );
@@ -252,7 +253,7 @@ class V2 extends CI_Controller
                     'id_instansi' => $userLogin->id_instansi,
                     'username' => $userLogin->username,
                     'nama' => $userLogin->nama,
-                    'jabatan' => $userLogin->jabat,
+                    'jabatan' => $userLogin->jabatan,
                     'image' => $userLogin->img_profile,
                     'role' => $role,
                     'last_time_login' => time()

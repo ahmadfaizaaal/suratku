@@ -65,7 +65,7 @@
                                             <th class="text-center text-middle" width="12%">
                                                 Aksi
                                             </th>
-                                            <th class="text-center" width="10%">
+                                            <th class="text-center" width="12%">
                                                 Nama Pengguna
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Username"></input>
                                             </th>
@@ -78,81 +78,64 @@
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Nama"></input>
                                             </th>
                                             <th class="text-center" width="23%">
-                                                Company Name
+                                                Jabatan
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Company"></input>
                                             </th>
-                                            <th class="text-center" width="15%">
+                                            <th class="text-center" width="13%">
                                                 Posisi
-                                                <select role="presentation" onclick="event.stopPropagation()" class="mt-3 form-control form-control-sm" >
+                                                <select role="presentation" onclick="event.stopPropagation()" class="mt-3 form-control form-control-sm" id="filter-posisi" >
                                                     <option value="all">Semua Posisi</option>
-                                                    <option value="all">Admin</option>
-                                                    <option value="all">Petugas</option>
+                                                    <?php foreach(["1" => "Administrator", "2" => "Pegawai", "3" => "Petugas Dispo"] as $index => $item): ?>
+                                                        <option value="<?= $index ?>"><?= $item ?></option>
+                                                    <?php endforeach; ?>
                                                 </select>
                                             </th>
                                             <th class="text-center" width="10%">
                                                 Status
+                                                
                                                 <select role="presentation" onclick="event.stopPropagation()" class="mt-3 form-control form-control-sm" >
                                                     <option value="all">Semua Status</option>
-                                                    <option value="all">Aktif</option>
-                                                    <option value="all">Tidak Aktif</option>
-                                                    
+                                                    <?php foreach(['switch-on' => 'Aktif', 'switch-off' => 'Non Aktif'] as $index => $item): ?>
+                                                        <option value="<?= $index ?>"><?= $item ?></option>
+                                                    <?php endforeach; ?>
                                                 </select>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-id="1">
-                                            <td class="text-center text-middle" data-item-id="1">
-                                                <!-- <button href="" data-modal-size="modal-lg" data-modal-with-header="true" data-modal-title="Detail User" data-modal-is-static-content="false" class="modal-trigger btn btn-sm btn-primary detail-btn" title="Detail"><i class="ti ti-pencil"></i></button> -->
-                                                <button href="<?= base_url('plus/master-user/list-user/form/1') ?>" data-modal-size="modal-lg" data-modal-with-header="true" data-modal-title="Ubah Data User" data-modal-is-static-content="false" class="modal-trigger btn btn-sm btn-success edit-btn" title="Edit"><i class="ti ti-eye"></i> Lihat Data</button>
-                                            </td>
-                                            <td class="text-middle">pasumbawabesar</td>
-                                            <td class="text-middle">pasumbawa@gmail.com</td>
-                                            <td class="text-middle">PA Sumbawa</td>
-                                            <td class="text-middle">Mahkamah Agung</td>
-                                            <td class="text-center text-middle">
-                                                <span class="d-none">ROLE-ADMIN</span>
-                                                <div class="input-group input-group-sm">
-                                                    <label class="input-group-text bg-white" for="role-icon-1"><i class="ti ti-circle text-success"></i></label>
-                                                    <select class="form-select role-select" data-update-url="<?= base_url('plus/master-user/list-user/update-role/1') ?>" id="role-select-1" data-current-role="Admin">
-                                                        <option value="Admin" selected>Admin</option>       
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td class="text-start text-middle">
-                                                <span class="d-none">switch-on</span>
-                                                <div class="form-check form-switch d-flex justify-content-center gap-3">
-                                                    <input class="form-check-input status-switch" data-update-url="<?= base_url('plus/master-user/list-user/update-status/1') ?>" type="checkbox" id="switch-1" checked>
-                                                    <label class="form-check-label" for="switch-1">Aktif</label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr data-id="2">
-                                            <td class="text-center text-middle" data-item-id="2">
-                                                <!-- <button href="" data-modal-size="modal-lg" data-modal-with-header="true" data-modal-title="Detail User" data-modal-is-static-content="false" class="modal-trigger btn btn-sm btn-primary detail-btn" title="Detail"><i class="ti ti-pencil"></i></button> -->
-                                                <button href="<?= base_url('plus/master-user/list-user/form/2') ?>" data-modal-size="modal-lg" data-modal-with-header="true" data-modal-title="Ubah Data User" data-modal-is-static-content="false" class="modal-trigger btn btn-sm btn-success edit-btn" title="Edit"><i class="ti ti-eye"></i> Lihat Data</button>
-                                            </td>
-                                            <td class="text-middle">pasub</td>
-                                            <td class="text-middle">pasub@mahkamahagung.go.id</td>
-                                            <td class="text-middle">PA Sumbawa Besar</td>
-                                            <td class="text-middle">Mahkamah Agung</td>
-                                            <td class="text-center text-middle">
-                                                <span class="d-none">ROLE-ADMIN</span>
-                                                <div class="input-group input-group-sm">
-                                                    <label class="input-group-text bg-white" for="role-icon-1"><i class="ti ti-circle text-success"></i></label>
-                                                    <select class="form-select role-select" data-update-url="<?= base_url('plus/master-user/list-user/update-role/1') ?>" id="role-select-1" data-current-role="Admin">
-                                                        <option value="Admin" selected>Admin</option>       
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td class="text-start text-middle">
-                                                <span class="d-none">switch-on</span>
-                                                <div class="form-check form-switch d-flex justify-content-center gap-3">
-                                                    <input class="form-check-input status-switch" data-update-url="<?= base_url('plus/master-user/list-user/update-status/1') ?>" type="checkbox" id="switch-1" checked>
-                                                    <label class="form-check-label" for="switch-1">Aktif</label>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        <?php foreach($users as $index => $item): ?>
+                                            <tr data-id="<?= $index ?>">
+                                                <td class="text-center text-middle" data-item-id="<?= $item->id_user ?>">
+                                                    <button href="<?= base_url('plus/master-user/list-user/form/'. $item->id_user) ?>" data-modal-size="modal-lg" data-modal-with-header="true" data-modal-title="Ubah Data User" data-modal-is-static-content="false" class="modal-trigger btn btn-sm btn-success edit-btn" title="Lihat Data"><i class="ti ti-eye"></i> Lihat Data</button>
+                                                </td>
+                                                <td class="text-middle"><?= $item->username ?></td>
+                                                <td class="text-middle"><?= $item->nama ?></td>
+                                                <td class="text-middle"><?= $item->email ?></td>
+                                                <td class="text-middle"><?= $item->jabatan ?></td>
+                                                <td class="text-center text-middle">
+                                                    <span class="d-none"><?= $item->role ?></span>
+                                                    <?php $roleColor = [ "1" => "success", "2" => "warning", "3" => "danger" ]?>
+                                                    <?php $roleText = [ "1" => "Administrator", "2" => "Pegawai", "3" => "Petugas Dispo" ]?>
+                                                    <div class="input-group input-group-sm">
+                                                        <label class="input-group-text bg-white" for="role-icon-<?= $item->id_user ?>"><i class="ti ti-chart-radar fw-bold text-<?php echo isset($roleColor[$item->role]) ? $roleColor[$item->role] : "secondary" ?>"></i></label>
+                                                        <select class="form-select role-select" data-update-url="<?= base_url('plus/master-user/list-user/update-role/'. $item->id_user) ?>" id="role-select-<?= $item->id_user ?>" data-current-role="<?= $item->role ?>">
+                                                            <?php foreach($roleText as $role => $text): ?>
+                                                                <option value="<?= $role ?>" <?= $item->role == $role ? "selected": "" ?>><?= $text ?></option>
+                                                            <?php endforeach ?>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td class="text-start text-middle">
+                                                    <span class="d-none"><?= $item->status == 1 ? "switch-on" : "switch-off" ?></span>
+                                                    <div class="form-check form-switch d-flex gap-3">
+                                                        <input class="form-check-input status-switch" data-update-url="<?= base_url('plus/master-user/list-user/update-status/'. $item->id_user) ?>" type="checkbox" id="switch-<?= $item->id_user ?>" <?= $item->status == 1 ? "checked": "" ?>>
+                                                        <label class="form-check-label" for="switch-<?= $item->id_user?>"><?= $item->status == 1 ? "Aktif" : "Non Aktif" ?></label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -187,11 +170,11 @@
                     tableInstance = $(document).find(id).DataTable({
                         scrollX: true,
                         order: [
-                            [1, "asc"]
+                            [4, "asc"]
                         ],
-                        pageLength: 10,
+                        pageLength: 5,
                         paging: true, // Pastikan pagination aktif
-                        lengthMenu: [10, 25, 50, 100], // Pilihan jumlah data per halaman
+                        lengthMenu: [5, 10, 25, 50, 100], // Pilihan jumlah data per halaman
                         dom: "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
                             "<'row'<'col-sm-12'tr>>" +
                             "<'row'<'col-sm-5'i><'col-sm-7'p>>",
@@ -239,6 +222,16 @@
                 }
 
                 initialLoad()
+
+                function disableSelects() {
+                    $('#list-data-user tbody select').prop('disabled', true);
+                }
+
+                disableSelects()
+
+                tableInstance.on('draw', function () {
+                    disableSelects();
+                });
 
                 $('#old_password_label').append('<span class="text-danger"> *</span>')
                 $('#new_password_label').append('<span class="text-danger"> *</span>')
