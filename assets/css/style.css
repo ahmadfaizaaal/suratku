@@ -21441,6 +21441,18 @@ select.form-control[data-multiselectsplitter-firstselect-selector], select.form-
 	background-color: #2ba87e;
 }
 
+.swal2-custom {
+  z-index: 1060 !important;
+}
+
+.swal-overlay {
+  z-index: 1060 !important;
+}
+.swal-modal {
+  z-index: 1070 !important;
+}
+
+
 /**  =====================
   24. Custom File Input CSS End
 ==========================  **/

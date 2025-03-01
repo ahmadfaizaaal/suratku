@@ -128,7 +128,7 @@ class V2 extends CI_Controller
                     'new_password' => $this->input->post('new_password'),
                     'confirm_password' => $this->input->post('confirm_password')
                 );
-                $userLogin = $this->user->getDataUser($param['username']);
+                $userLogin = $this->user->getDataUser('username', $param['username']);
 
                 if (password_verify($param['old_password'], $userLogin->password)) {
                     $this->form_validation->set_rules('new_password', 'Kata Sandi Baru', 'required|trim|min_length[5]|matches[confirm_password]', [
@@ -176,7 +176,7 @@ class V2 extends CI_Controller
 				break;
 			case "instansi":
                 $data['instansi'] = $this->initiateInstitutionDescData();
-                $data['userLogin'] = $this->user->getDataUser($this->session->userdata('username'));
+                $data['userLogin'] = $this->user->getDataUser('username', $this->session->userdata('username'));
                 $data['allowEdit'] = false;
 
                 $urlParam = $this->uri->segment(4);
@@ -200,9 +200,44 @@ class V2 extends CI_Controller
                 }
 				break;
 			case "users":
-                $data = $this->initiateUserProfileData();
-                $data['users'] = $this->user->getListUsers();
-                load_page('pages/users_list', SYS_NAME, $data);
+                $urlParam = $this->uri->segment(4);
+                switch ($urlParam) {
+                    case null:
+                        $data = $this->initiateUserProfileData();
+                        // $data['users'] = $this->user->getListUsers();
+                        load_page('pages/user_list', SYS_NAME, $data);
+                        break;
+                    case "list":
+                        $data['users'] = $this->user->getListUsers();
+                        echo json_encode($data);
+                        break;
+                    case "detail":
+                        $idUser = $this->uri->segment(5);
+                        $data['user'] = $this->user->getDataUser('id_user', $idUser);
+                        echo json_encode($data);
+                        break;
+                    case "save-changes":
+                        $idUser = $this->input->post('id_user');
+                        $param = array(
+                            'username' => $this->input->post('username'),
+                            'nama' => $this->input->post('nama'),
+                            'nip' => $this->input->post('nip'),
+                            'email' => $this->input->post('email') ?? "-",
+                            'jabatan' => $this->input->post('jabatan'),
+                            'role' => $this->input->post('role'),
+                            'status' => $this->input->post('status_choosen')
+                        );
+                        $updated = $this->user->updateDataUser(TBL_USER, array('column' => 'id_user', 'value' => $idUser), $param);
+                        if ($updated) {
+                            echo json_encode(['status' => 'success', 'message' => 'Data user berhasil diperbarui!']);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data user.']);
+                        }
+                        break;
+                    default:
+                        redirect(404);
+                        break;
+                }
                 break;
             case "app":
                 $data = $this->initiateUserProfileData();
@@ -224,7 +259,7 @@ class V2 extends CI_Controller
         $username = $this->input->post('username');
         $password = $this->input->post('password');
         $rememberMe = $this->input->post('rememberMe');
-        $userLogin = $this->user->getDataUser($username);
+        $userLogin = $this->user->getDataUser('username', $username);
 
         if ($userLogin) {
             $role = $userLogin->role;
@@ -355,7 +390,7 @@ class V2 extends CI_Controller
 
     private function initiateDashboardPageData() {
         $data['instansi'] = $this->initiateInstitutionDescData();
-        $data['userLogin'] = $this->user->getDataUser($this->session->userdata('username'));
+        $data['userLogin'] = $this->user->getDataUser('username', $this->session->userdata('username'));
         $data['summary'] = array(
             'surat_masuk' => $this->general->countDataTable('tbl_surat_masuk'),
             'surat_keluar' => $this->general->countDataTable('tbl_surat_keluar'),
@@ -367,7 +402,7 @@ class V2 extends CI_Controller
 
     private function initiateUserProfileData($action = null) {
         $data['instansi'] = $this->initiateInstitutionDescData();
-        $data['userLogin'] = $this->user->getDataUser($this->session->userdata('username'));
+        $data['userLogin'] = $this->user->getDataUser('username', $this->session->userdata('username'));
         $data['allowEdit'] = false;
         if (!empty($action) && $action == 'edit') {
             $data['allowEdit'] = true;

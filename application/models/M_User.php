@@ -16,11 +16,11 @@ class M_User extends CI_Model
         return $query->result();
     }
 
-    public function getDataUser($username)
+    public function getDataUser($column, $param)
     {
         $this->db->select('*');
         $this->db->from(TBL_USER);
-        $this->db->where('username', $username);
+        $this->db->where($column, $param);
         $sql = $this->db->get();
         $result = $sql->row();
         return $result;
