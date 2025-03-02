@@ -142,7 +142,7 @@
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
-                            <label for="nip" class="label-control col-md-4">NIP</label>
+                            <label for="nip" class="label-control col-md-4">NIP<span class="fst-italic text-muted fs-7">&nbsp;&nbsp;(isi dengan 0 jika tidak ada)</span></label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control" id="nip" name="nip" value="">
                             </div>
@@ -270,9 +270,9 @@
                 //LIHAT DATA HANDLER
                 $('#dataUserTable').on('click', '.view-detail', function() {
                     var userId = $(this).attr('data');
-                    // var modal = $('#modalUserDetail');
 
                     modal.modal('show');
+                    validateNIP();
 
                     $.ajax({
                         type: 'ajax',
@@ -306,11 +306,69 @@
                         modal.removeAttr('aria-hidden');
                     }, 300);
                 });
-
+                
                 $(document).on('click', '[data-dismiss="modal"]', function () {
                     $('#modalUserDetail').modal('hide');
                 });
                 //END OF LIHAT DATA HANDLER
+
+                //DELETE DATA HANDLER
+                $('#dataUserTable').on('click', '.delete-data', function() {
+                    var userId = $(this).attr('data');
+
+                    swal({
+                        title: 'Anda yakin ingin menghapus user?',
+                        type: 'warning',
+                        showCancelButton: true,
+                        focusConfirm: false,
+                        confirmButtonColor: '#2ba87e',
+                        cancelButtonColor: '#dc2625',
+                        confirmButtonText: 'Ya',
+                        cancelButtonText: 'Tidak',
+                        customClass: 'swal2-custom'
+                    }).then(result => {
+                        if (result.value) {
+                            $.ajax({
+                                type: 'ajax',
+                                method: 'post',
+                                url: '<?= BASE_URL . 'v2/setting/users/delete/'; ?>' + userId,
+                                async: false,
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.status === "error") {
+                                        swal({
+                                                title: 'Error!',
+                                                text: response.message,
+                                                type: 'error',
+                                                confirmButtonColor: '#dc2625',
+                                                confirmButtonText: 'Oke'
+                                            });
+                                    } else if (response.status === "success") {
+                                        swal({
+                                            title: 'Berhasil!',
+                                            text: response.message,
+                                            type: 'success',
+                                            confirmButtonColor: '#2ba87e',
+                                            confirmButtonText: 'Oke'
+                                        }).then(() => {
+                                            window.location.href = '<?= BASE_URL . 'v2/setting/users' ?>'; 
+                                        });
+                                    }
+                                },
+                                error: function() {
+                                    swal({
+                                        title: 'Error!',
+                                        text: 'Terjadi kesalahan, coba lagi!',
+                                        type: 'error',
+                                        confirmButtonColor: '#dc2625',
+                                        confirmButtonText: 'Oke'
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+                //END OF DELETE DATA HANDLER
 
                 $("#status").change(function () {
                     let statusValue = $(this).is(":checked") ? 1 : 0;
@@ -336,8 +394,11 @@
                                 var row = `
                                     <tr>
                                         <td class="text-center">
-                                            <a href="javascript:;" data="${user.id_user}" class="btn btn-sm btn-success view-detail" data-toggle="modal" data-target="#modalUserDetail">
-                                                <i class="ti ti-eye"></i> Lihat Data
+                                            <a href="javascript:;" data="${user.id_user}" class="btn btn-sm btn-success view-detail fs-7 me-2" data-toggle="modal" data-target="#modalUserDetail">
+                                                <i class="ti ti-eye"></i> Lihat
+                                            </a>
+                                            <a href="javascript:;" data="${user.id_user}" class="btn btn-sm btn-danger delete-data fs-7">
+                                                <i class="ti ti-trash"></i> Hapus
                                             </a>
                                         </td>
                                         <td>${user.username}</td>
@@ -443,6 +504,8 @@
                     }
                 });
 
+                
+
                 function checkIsFilled(id, errorMsg) {
                     let isFilled = true;
                     let element = $(`#${id}`);
@@ -481,6 +544,37 @@
                     }
 
                     return true; 
+                }
+
+                function validateNIP() {
+                    $('#nip').on('keypress', function(e) {
+                        var $this = $(this);
+                        var regex = new RegExp("^[0-9\b]+$");
+                        var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+                        // for 16 digit number only
+                        if ($this.val().length > 17) {
+                            e.preventDefault();
+                            return false;
+                        }
+                        if (regex.test(str)) {
+                            currentNum = 56;
+                            return true;
+                        }
+                        e.preventDefault();
+                        return false;
+                    });
+
+                    $('#nip').on('paste', function(e) {
+                        e.preventDefault();
+                        var pastedText = (e.originalEvent || e).clipboardData.getData('text');
+                        var sanitizedText = pastedText.replace(/\D/g, ''); // Hanya angka
+                        
+                        if (sanitizedText.length > 16) {
+                            sanitizedText = sanitizedText.substring(0, 16);
+                        }
+                        
+                        $(this).val(sanitizedText);
+                    });
                 }
 
             });

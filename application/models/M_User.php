@@ -58,6 +58,17 @@ class M_User extends CI_Model
         $this->db->update(TBL_USER, ['remember_token' => $token]);
     }
 
+    public function deleteDataUser($userID)
+    {
+        $this->db->where('id_user', $userID);
+        $this->db->delete(TBL_USER);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 
 

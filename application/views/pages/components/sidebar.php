@@ -103,8 +103,8 @@
                                 <li class="pc-item pc-hasmenu">
                                     <a href="#!" class="pc-link">Manajemen Data<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
-                                        <li class="pc-item"><a class="pc-link" href="#!">Cadangkan Data</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/restore' ?>">Pulihkan Data</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/app/backup' ?>">Pencadangan</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/app/restore' ?>">Pemulihan</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -132,6 +132,7 @@
                         if (currentUrl === absoluteMenuUrl || currentUrl.startsWith(absoluteMenuUrl + "/")) {
                             $(this).parent().addClass("active"); // Tambahkan class 'active' ke menu/submenu
                             $(this).closest(".pc-hasmenu").addClass("active"); // Pastikan menu induk juga aktif
+                            $(this).parents(".pc-hasmenu").addClass("active"); // Pastikan semua parent dengan class pc-hasmenu aktif
                             $(this).closest(".pc-submenu").show(); // Tampilkan submenu terkait
                         }
                     }

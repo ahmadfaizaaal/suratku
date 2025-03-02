@@ -13,6 +13,7 @@ class V2 extends CI_Controller
         $this->load->model('M_User', 'user');
         $this->load->model('M_Instansi', 'instansi');
         $this->load->model('M_Surat', 'surat');
+        $this->load->dbutil();
         date_default_timezone_set('Asia/Bangkok');
     }
     
@@ -203,8 +204,7 @@ class V2 extends CI_Controller
                 $urlParam = $this->uri->segment(4);
                 switch ($urlParam) {
                     case null:
-                        $data = $this->initiateUserProfileData();
-                        // $data['users'] = $this->user->getListUsers();
+                        $data = $this->initiateUserProfileData();                        
                         load_page('pages/user_list', SYS_NAME, $data);
                         break;
                     case "list":
@@ -234,18 +234,85 @@ class V2 extends CI_Controller
                             echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data user.']);
                         }
                         break;
+                    case "delete":
+                        $idUser = $this->uri->segment(5);
+                        $deleted = $this->user->deleteDataUser($idUser);
+                        if ($deleted) {
+                            echo json_encode(['status' => 'success', 'message' => 'Data user berhasil dihapus!']);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data user.']);
+                        }
+                        break;
                     default:
                         redirect(404);
                         break;
                 }
                 break;
             case "app":
-                $data = $this->initiateUserProfileData();
-                load_page('pages/change_password', SYS_NAME, $data);
+                $urlParam = $this->uri->segment(4);
+                switch ($urlParam) {
+                    case "backup":
+                        $urlParam = $this->uri->segment(5);
+                        switch ($urlParam) {
+                            case null:
+                                $data = $this->initiateUserProfileData();                         
+                                load_page('pages/backup', SYS_NAME, $data);
+                                break;
+                            case "list":
+                                $data['tables'] = [];
+                                $tables = $this->general->getListTables();
+                                foreach ($tables as $index => $table) {
+                                    $count = $this->general->countDataTable($table);
+                                    $data['tables'][] = [
+                                        'id' => $index,
+                                        'name' => $table, 
+                                        'count' => $count
+                                    ];
+                                }
+                                echo json_encode($data);
+                                break;
+                            case "validate-otp":
+                                $otp = $this->input->post('otp');
+                                if (SECRET_PIN === $otp) {
+                                    echo json_encode(['valid' => true, 'message' => 'Kode keamanan valid!']);
+                                } else {
+                                    echo json_encode(['valid' => false, 'message' => 'Gagal memvalidasi kode keamanan.']);
+                                }
+                                break;
+                            case "exec-all":
+                                $backedUp = $this->executeBackup('all');
+                                if ($backedUp) {
+                                    echo json_encode(['status' => 'success', 'message' => 'Data berhasil dicadangkan!']);
+                                } else {
+                                    echo json_encode(['status' => 'error', 'message' => 'Gagal mencadangkan data.']);
+                                }
+                                break;
+                            case "exec-partial":
+                                // $tables = $this->input->post('tables');
+                                $param = $this->input->get('tables');
+                                $tables = explode(",", $param);
+                                $backedUp = $this->executeBackup('partial', $tables);
+                                if ($backedUp) {
+                                    echo json_encode(['status' => 'success', 'message' => 'Data berhasil dicadangkan!']);
+                                } else {
+                                    echo json_encode(['status' => 'error', 'message' => 'Gagal mencadangkan data.']);
+                                }
+                                break;
+                            default:
+                                redirect(404);
+                                break;
+                        }
+                        break;
+                    case "restore":
+                        $idUser = $this->uri->segment(5);
+                        $data['user'] = $this->user->getDataUser('id_user', $idUser);
+                        echo json_encode($data);
+                        break;
+                    default:
+                        redirect(404);
+                        break;
+                }
                 break;
-            case "save-changes-password":
-                
-				break;
 			default:
 				redirect(404);
 				break;
@@ -514,123 +581,40 @@ class V2 extends CI_Controller
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public function register($param)
+
+    public function executeBackup($option, $tables = null) 
     {
-        if ($this->session->userdata('nik')) {
-            redirect('home');
+        $prefs['format'] = 'zip';
+        switch($option) {
+            case "all":
+                $prefs['filename'] = 'full-database-backup.sql';
+                break;
+            case "partial":
+                $prefs['tables'] = $tables;
+                $prefs['filename'] = 'selected-tables-backup.sql';
+                break;
+            default:
+                redirect(404);
+                return;
+        }
+        $backup = $this->dbutil->backup($prefs);
+        if (!$backup) {
+            log_message('error', 'Gagal membuat backup database.');
+            show_error("Gagal membuat backup.", 500);
         }
 
-        $nik = htmlspecialchars($this->input->post('nik', true));
-        $isUser = $this->auth->getDataParticipant($nik);
-
-        if ($isUser) {
-            $this->session->set_flashdata(
-                'message',
-                '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    NIK telah terdaftar di sistem!
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>'
-            );
-            redirect('auth/register/' . $param);
-        } else {
-            //BEGINNING RULES
-            $this->form_validation->set_rules('nik', 'No. KTP', 'required|trim|min_length[16]|max_length[16]|numeric', [
-                'min_length' => 'No. KTP minimal sebanyak 16 karakter!',
-                'max_length' => 'No. KTP maksimal sebanyak 16 karakter!',
-                'numeric' => 'No. KTP harus berupa angka!',
-                'required' => "No. KTP harus diisi!"
-            ]);
-            $this->form_validation->set_rules('fullname', 'Full Name', 'required|trim', [
-                'required' => "Nama lengkap harus diisi!"
-            ]);
-            $this->form_validation->set_rules('birthplace', 'Tempat Lahir', 'required|trim', [
-                'required' => "Tempat lahir harus diisi!"
-            ]);
-            $this->form_validation->set_rules('birthdate', 'Tanggal Lahir', 'required|trim', [
-                'required' => "Tanggal lahir harus diisi!"
-            ]);
-            $this->form_validation->set_rules('address', 'Alamat Sesuai KTP', 'required|trim', [
-                'required' => "Alamat sesuai KTP harus diisi!"
-            ]);
-            $this->form_validation->set_rules('phone', 'Phone Number', 'required|trim|min_length[10]|max_length[12]|numeric', [
-                'min_length' => 'No. HP sedikitnya sebanyak 10 karakter!',
-                'max_length' => 'No. HP maksimal sebanyak 12 karakter!',
-                'numeric' => 'No. HP harus berupa angka!',
-                'required' => "No. HP / WA harus diisi!"
-            ]);
-            $this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email', [
-                'required' => "Email harus diisi!"
-            ]);
-            $this->form_validation->set_rules('password1', 'Kata sandi', 'required|trim|min_length[6]|matches[password2]', [
-                'matches' => "Kata sandi tidak sesuai!",
-                'min_length' => "Kata sandi terlalu singkat!",
-                'required' => "Kata sandi harus diisi!"
-            ]);
-            $this->form_validation->set_rules('password2', 'Kata sandi', 'required|trim|matches[password1]', [
-                'required' => "Kata sandi harus diisi!"
-            ]);
-
-            //SELECTION
-            if ($this->form_validation->run() == false) {
-                $data['title'] = 'Sistem Manajemen Layanan Pernikahan';
-                $data['param'] = $param;
-                $this->load->view('auth/register', $data);
-            } else {
-                $penduduk = $this->auth->getDataByNIK($nik);
-
-                $data = [
-                    'NIK' => $nik,
-                    'NAME' => htmlspecialchars($penduduk->NAMA),
-                    'GENDER' => htmlspecialchars($penduduk->JENIS_KELAMIN),
-                    'BIRTH_PLACE' => htmlspecialchars($penduduk->TEMPAT_LAHIR),
-                    'BIRTH_DATE' => htmlspecialchars($penduduk->TANGGAL_LAHIR),
-                    'JOB' => htmlspecialchars($penduduk->PEKERJAAN),
-                    'PHONE' => htmlspecialchars($this->input->post('phone', true)),
-                    'EMAIL' => htmlspecialchars($this->input->post('email', true)),
-                    'ADDRESS' => htmlspecialchars($this->input->post('address', true)),
-                    'PASSWORD' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-                    'DTM_CRT' => date('Y-m-d H:i:s')
-                ];
-
-                $this->auth->registerAccount($data);
-                $this->session->set_flashdata(
-                    'message',
-                    '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Selamat!</strong> Akun anda telah berhasil dibuat. Silahkan login untuk melanjutkan!
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>'
-                );
-                redirect('auth/login/' . $param);
-            }
-        }
-    }
-
-    public function denied()
-    {
-        $data['title'] = 'Access Denied!';
-        $this->load->view('templates/header', $data);
-        $this->load->view('auth/denied');
-        $this->load->view('templates/footer');
-    }
-
-    public function cekNIK()
-    {
-        $nik = $this->input->post('nik');
-        $penduduk = $this->auth->getDataByNIK($nik);
-        echo json_encode($penduduk);
+        $dbName = 'Backup_Suratku_' . date('Y-m-d_H-i-s') . '.zip';
+        force_download($dbName, $backup);
+        // $backup = $this->dbutil->backup($prefs);
+        // if (!$backup) {
+        //     return false;
+        // }
+        // $dbName = 'Backup_Suratku_' . date('Y-m-d_H-i-s') . '.zip';
+        // header('Content-Type: application/zip');
+        // header('Content-Disposition: attachment; filename="' . $dbName . '"');
+        // header('Content-Length: ' . strlen($backup));
+        // echo $backup;
+        // exit;
     }
 
     public function logout()

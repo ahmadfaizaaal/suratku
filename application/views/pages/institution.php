@@ -273,6 +273,18 @@
                         e.preventDefault();
                         return false;
                     });
+
+                    $('#nip').on('paste', function(e) {
+                        e.preventDefault();
+                        var pastedText = (e.originalEvent || e).clipboardData.getData('text');
+                        var sanitizedText = pastedText.replace(/\D/g, ''); // Hanya angka
+                        
+                        if (sanitizedText.length > 16) {
+                            sanitizedText = sanitizedText.substring(0, 16);
+                        }
+                        
+                        $(this).val(sanitizedText);
+                    });
                 }
 
                 function validatePhoneNumber() {

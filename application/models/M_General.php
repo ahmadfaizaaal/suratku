@@ -14,4 +14,10 @@ class M_General extends CI_Model
         $result = $this->db->count_all($tableName);
         return $result;
     }
+
+    public function getListTables() 
+    {
+        $tables = $this->db->list_tables();
+        return $tables;
+    }
 }

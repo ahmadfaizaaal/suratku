@@ -9,6 +9,7 @@ define('TBL_SURAT_MASUK', 'tbl_surat_masuk');
 define('TBL_SURAT_KELUAR', 'tbl_surat_keluar');
 define('TBL_KLASIFIKASI', 'tbl_klasifikasi_new');
 define('TBL_USER', 'tbl_user');
+define('SECRET_PIN', '251024');
 
 /*
 |--------------------------------------------------------------------------
