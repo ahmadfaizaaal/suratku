@@ -22,6 +22,8 @@
         <link rel="stylesheet" type="text/css" href="<?= BASE_THEME ?>css/selects/select2.min.css">
         <link href="<?= BASE_THEME; ?>vendor/simple-datatables/style.css" rel="stylesheet">
 	    <link href="<?= BASE_THEME; ?>vendor/dataTables/dataTables.bootstrap5.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.css">
+
 
         <!-- EXTERNAL JS RESOURCES -->
         <script src="<?= BASE_THEME; ?>js/jquery/jquery.min.js"></script>

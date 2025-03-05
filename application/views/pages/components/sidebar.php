@@ -84,7 +84,7 @@
                             </ul>
                         </li>
                         <li class="pc-item">
-                            <a href="../other/sample-page.html" class="pc-link">
+                            <a href="<?= BASE_URL . 'v2/referensi' ?>" class="pc-link">
                                 <span class="pc-micon">
                                     <i class="ti ti-file-search"></i></span>
                                 </span>

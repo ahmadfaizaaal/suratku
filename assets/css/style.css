@@ -5088,8 +5088,8 @@ textarea.form-control-lg {
   --bs-list-group-disabled-color: #dbe0e5;
   --bs-list-group-disabled-bg: #ffffff;
   --bs-list-group-active-color: #ffffff;
-  --bs-list-group-active-bg: var(--bs-primary);
-  --bs-list-group-active-border-color: var(--bs-primary);
+  --bs-list-group-active-bg: var(--bs-success);
+  --bs-list-group-active-border-color: var(--bs-success);
   display: flex;
   flex-direction: column;
   padding-left: 0;
@@ -5118,8 +5118,10 @@ textarea.form-control-lg {
   background-color: var(--bs-list-group-action-hover-bg);
 }
 .list-group-item-action:active {
-  color: var(--bs-list-group-action-active-color);
-  background-color: var(--bs-list-group-action-active-bg);
+  /* color: var(--bs-list-group-action-active-color); */
+  /* background-color: var(--bs-list-group-action-active-bg); */
+  color: #ffffff;
+  background-color: var(--bs-success);
 }
 
 .list-group-item {
@@ -5146,8 +5148,10 @@ textarea.form-control-lg {
 .list-group-item.active {
   z-index: 2;
   color: var(--bs-list-group-active-color);
-  background-color: var(--bs-list-group-active-bg);
-  border-color: var(--bs-list-group-active-border-color);
+  /* background-color: var(--bs-list-group-active-bg); */
+  /* border-color: var(--bs-list-group-active-border-color); */
+  border-color: var(--bs-success);
+  background-color: var(--bs-success);
 }
 .list-group-item + .list-group-item {
   border-top-width: 0;
@@ -17389,6 +17393,8 @@ pre[class*=language-] > code {
   justify-content: flex-start;
   align-content: flex-start;
   align-items: flex-start;
+  max-height: 75vh;
+  overflow-y: auto !important;
 }
 
 .simplebar-wrapper {
@@ -21455,6 +21461,20 @@ select.form-control[data-multiselectsplitter-firstselect-selector], select.form-
 .inputs input {
   width: 40px;
   height: 40px
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0
+}
+
+.component-list-card {
+  flex: 1;
+  max-height: 100%;
+  overflow-y: auto; /* Scroll jika lebih dari 10 item */
 }
 
 

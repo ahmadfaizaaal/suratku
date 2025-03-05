@@ -166,6 +166,33 @@ class V2 extends CI_Controller
 		}
     }
 
+    public function referensi($action = null) {
+        if (!$this->session->userdata('username')) {
+            redirect('v2');
+        }
+
+        switch ($action) {
+			case null:
+                $data = $this->initiateUserProfileData();
+				load_page('pages/reference', SYS_NAME, $data);
+				break;
+			case "list-parent":
+                $data['parent'] = $this->surat->getParentKlasifikasi();
+                echo json_encode($data);
+				break;
+			case "sub-klasifikasi":
+                $parent = $this->uri->segment(4) ?? "HK";
+                $data['subKlasifikasi'] = $this->surat->getSubKlasifikasi($parent);
+                echo json_encode($data);
+                break;
+            case "app":
+                break;
+			default:
+				redirect(404);
+				break;
+		}
+    }
+
     public function setting($action = null) {
         if (!$this->session->userdata('username')) {
             redirect('v2');
@@ -527,7 +554,8 @@ class V2 extends CI_Controller
         $upload_path = 'assets/';
         $fileTypes = array(
             'docs' => 'pdf|docx|doc',
-            'images' => 'jpg|png|jpeg|JPG|PNG|JPEG'
+            'images' => 'jpg|png|jpeg|JPG|PNG|JPEG',
+            'sql' => 'sql'
         );
         $allowedType = '';
         switch ($fileTag) {
@@ -547,12 +575,15 @@ class V2 extends CI_Controller
                 $upload_path .= 'images/institution';
                 $allowedType = $fileTypes['images'];
 				break;
+            case "sql":
+                $upload_path .= 'uploads/temps';
+                $allowedType = $fileTypes['images'];
+                break;
 			default:
 				redirect(404);
 				break;
 		}
-        // echo $upload_path;
-        // die;
+        
         $file = $_FILES[$fileName]['name'];
         $new_fileName = '';
         $date = date('Ymd-His');
@@ -582,14 +613,17 @@ class V2 extends CI_Controller
         }
     }
 
-    public function executeBackup($option, $tables = null) 
+    private function executeBackup($option, $tables = null) 
     {
         $prefs['format'] = 'zip';
+        $prefix = '';
         switch($option) {
             case "all":
+                $prefix = '[ALL] Backup_DB_';
                 $prefs['filename'] = 'full-database-backup.sql';
                 break;
             case "partial":
+                $prefix = '[SELECTED] Backup_DB_';
                 $prefs['tables'] = $tables;
                 $prefs['filename'] = 'selected-tables-backup.sql';
                 break;
@@ -603,18 +637,13 @@ class V2 extends CI_Controller
             show_error("Gagal membuat backup.", 500);
         }
 
-        $dbName = 'Backup_Suratku_' . date('Y-m-d_H-i-s') . '.zip';
+        $dbName = $prefix . date('Y-m-d_H-i-s') . '.zip';
         force_download($dbName, $backup);
-        // $backup = $this->dbutil->backup($prefs);
-        // if (!$backup) {
-        //     return false;
-        // }
-        // $dbName = 'Backup_Suratku_' . date('Y-m-d_H-i-s') . '.zip';
-        // header('Content-Type: application/zip');
-        // header('Content-Disposition: attachment; filename="' . $dbName . '"');
-        // header('Content-Length: ' . strlen($backup));
-        // echo $backup;
-        // exit;
+    }
+
+    private function executeRestore()
+    {
+
     }
 
     public function logout()

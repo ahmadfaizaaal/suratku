@@ -9,7 +9,7 @@
                             <ul class="breadcrumb">
                                 <li class="breadcrumb-item" aria-current="page">Pengaturan</li>
                                 <li class="breadcrumb-item" aria-current="page">Manajemen Data</li>
-                                <li class="breadcrumb-item"><a href="<?= BASE_URL . 'v2/setting/users' ?>">Pencadangan</a></li>
+                                <li class="breadcrumb-item"><a href="<?= BASE_URL . 'v2/setting/app/backup' ?>">Pencadangan</a></li>
                             </ul>
                         </div>
                         <div class="col-md-12">
@@ -100,7 +100,7 @@
 
         <!-- MODAL USER DETAIL -->
         <div class="modal fade" id="modalOtpConfirmation" tabindex="-1" role="dialog" aria-labelledby="modalOtpConfirmationLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg " role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <?= form_open_multipart('v2/setting/users/save-changes', 'id="form-edit-user"'); ?>
                 <div class="modal-content">
                     <div class="modal-header">
@@ -193,7 +193,7 @@
 
                 //CHOOSE TABLE HANDLER
                 let $backupButton = $("#btnBackup");
-                let clearSelectionButton = $(`<a href="javascript:;" class="btn btn-danger btn-md d-flex align-items-center justify-content-center me-2" id="btnClear"><i class="ti ti-trash"></i>&nbsp;&nbsp;Hapus Pilihan</a>`);
+                let clearSelectionButton = $(`<a href="javascript:;" class="btn btn-link-danger btn-md d-flex align-items-center justify-content-center me-2" id="btnClear"><i class="ti ti-trash"></i>&nbsp;&nbsp;Hapus Pilihan</a>`);
 
                 $(document).on('change', '.choose-table', function(e) {
                     if ($(".choose-table:checked").length > 0) {
@@ -263,6 +263,7 @@
                         success: function(response) {
                             if (response.valid) {
                                 modal.modal('hide');
+                                $("#otp input").val("");
                                 swal({
                                     title: 'Berhasil!',
                                     text: response.message,
@@ -290,6 +291,9 @@
                             swal("Error!", "Could not get Data from Database!", "error");
                         }
                     });
+                });
+                modal.on('hidden.bs.modal', function () {
+                    $("#otp input").val("");
                 });
                 //END OF SECURITY CODE
 

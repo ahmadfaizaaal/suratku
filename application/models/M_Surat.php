@@ -109,4 +109,60 @@ class M_Surat extends CI_Model
             return null;
         }
     }
+
+    public function getParentKlasifikasi()
+    {
+        $this->db->select('id_klasifikasi, kode, nama');
+        $this->db->from(TBL_KLASIFIKASI);
+        $this->db->where('id_parent', 0);
+        $result = $this->db->get();
+        if ($result->num_rows() > 0) {
+            return $result->result();
+        } else {
+            return null;
+        }
+    }
+
+    public function getSubKlasifikasi($parent)
+    {
+        $query = "WITH RECURSIVE klasifikasi_tree (id_klasifikasi, id_parent, kode, nama, uraian, level, path) AS (
+                        SELECT 
+                            id_klasifikasi, 
+                            id_parent, 
+                            kode, 
+                            nama,
+                            uraian, 
+                            1 AS level, 
+                            kode AS path
+                        FROM tbl_klasifikasi_new
+                        WHERE kode = '$parent'
+
+                        UNION ALL
+
+                        SELECT 
+                            tk.id_klasifikasi, 
+                            tk.id_parent, 
+                            tk.kode, 
+                            tk.nama,
+                            tk.uraian, 
+                            kt.level + 1 AS level,
+                            CONCAT(kt.path, ' > ', tk.kode) AS path
+                        FROM tbl_klasifikasi_new tk
+                        INNER JOIN klasifikasi_tree kt ON tk.id_parent = kt.id_klasifikasi
+                    )
+                    SELECT 
+                        CONCAT(REPEAT('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', level - 1), '├─── ', kode) AS tree_view, 
+                        nama,
+                        uraian,
+                        id_klasifikasi,
+                        id_parent
+                    FROM klasifikasi_tree
+                    ORDER BY path;";
+        $result = $this->db->query($query);
+        if ($result->num_rows() > 0) {
+            return $result->result();
+        } else {
+            return null;
+        }
+    }
 }

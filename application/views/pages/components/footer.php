@@ -17,7 +17,8 @@
         <!-- Required Js -->
         <script src="<?= BASE_THEME; ?>js/plugins/popper.min.js"></script>
         <script src="<?= BASE_THEME; ?>js/plugins/bootstrap.min.js"></script>
-        <script src="<?= BASE_THEME; ?>js/plugins/simplebar.min.js"></script>
+        <!-- <script src="<?= BASE_THEME; ?>js/plugins/simplebar.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
         <script src="<?= BASE_THEME; ?>js/fonts/custom-font.js"></script>
         <script src="<?= BASE_THEME; ?>js/script.js"></script>
         <script src="<?= BASE_THEME; ?>js/theme.js"></script>
