@@ -110,12 +110,12 @@
                     <div class="modal-body align-items-center justify-content-center">
                         <h6 class="text-center">Masukkan kode keamanan untuk melakukan pencadangan dan pemulihan data.</h6>
                         <div id="otp" class="inputs d-flex flex-row justify-content-center mt-2">
-                            <input class="m-2 text-center form-control rounded" type="text" id="first" maxlength="1" autocomplete="off" />
-                            <input class="m-2 text-center form-control rounded" type="text" id="second" maxlength="1" autocomplete="off" />
-                            <input class="m-2 text-center form-control rounded" type="text" id="third" maxlength="1" autocomplete="off" />
-                            <input class="m-2 text-center form-control rounded" type="text" id="fourth" maxlength="1" autocomplete="off" />
-                            <input class="m-2 text-center form-control rounded" type="text" id="fifth" maxlength="1" autocomplete="off" />
-                            <input class="m-2 text-center form-control rounded" type="text" id="sixth" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="first" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="second" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="third" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="fourth" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="fifth" maxlength="1" autocomplete="off" />
+                            <input class="m-2 text-center form-control rounded" type="password" id="sixth" maxlength="1" autocomplete="off" />
                         </div>
                     </div>
                     <div class="modal-footer align-items-center justify-content-center">
@@ -278,6 +278,7 @@
                                     window.location.href = backupUrl; 
                                 });
                             } else {
+                                modal.modal('hide');
                                 swal({
                                     title: 'Error!',
                                     text: response.message,
