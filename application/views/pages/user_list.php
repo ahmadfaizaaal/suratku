@@ -128,10 +128,11 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="id_user" value="0">
+                        <input type="hidden" id="actionType" name="actionType" value="">
                         <div class="form-group row align-items-center">
                             <label for="nama" class="label-control col-md-4">Nama Lengkap</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" id="nama" name="nama" value="">
+                                <input type="text" class="form-control" id="nama" name="nama" value="" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
@@ -139,7 +140,7 @@
                             <div class="col-md-8">
                                 <div class="input-group">
                                     <span class="input-group-text text-success fw-bold" id="basic-addon1">@</span>
-                                    <input type="text" class="form-control" id="username" name="username" aria-label="Username" aria-describedby="basic-addon1">
+                                    <input type="text" class="form-control" id="username" name="username" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
                                 </div>
                                 <!-- <input type="text" class="form-control" id="username" name="username" value=""> -->
                             </div>
@@ -147,19 +148,19 @@
                         <div class="form-group row align-items-center">
                             <label for="nip" class="label-control col-md-4">NIP<span class="fst-italic text-muted fs-7">&nbsp;&nbsp;(isi dengan 0 jika tidak ada)</span></label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" id="nip" name="nip" value="">
+                                <input type="text" class="form-control" id="nip" name="nip" value="" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
                             <label for="email" class="label-control col-md-4">Email</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" id="email" name="email" value="">
+                                <input type="text" class="form-control" id="email" name="email" value="" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row align-items-center">
                             <label for="jabatan" class="label-control col-md-4">Jabatan</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control" id="jabatan" name="jabatan" value="">
+                                <input type="text" class="form-control" id="jabatan" name="jabatan" value="" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group row align-items-center mb-4">
@@ -179,7 +180,7 @@
                                 <span class="d-none" id="statusToggle"></span>
                                 <div class="form-check form-switch d-flex gap-3 ms-2 align-items-center">
                                     <input class="form-check-input status-toggle f-18" type="checkbox" id="status" name="status">
-                                    <label class="form-check-label" id="statusLabel"></label>
+                                    <label class="form-check-label" id="statusLabel">Non Aktif</label>
                                 </div>
                             </div>
                         </div>
@@ -211,9 +212,9 @@
                     tableInstance = $(document).find(id).DataTable({
                         scrollX: true,
                         order: [
-                            [0, "asc"]
+                            [6, "desc"]
                         ],
-                        pageLength: 5,
+                        pageLength: 10,
                         paging: true, // Pastikan pagination aktif
                         lengthMenu: [5, 10, 25, 50, 100], // Pilihan jumlah data per halaman
                         language: {
@@ -270,10 +271,38 @@
                 });
                 //END OF DISABLE SELECT AND SWITCH
 
-                //LIHAT DATA HANDLER
+                //ADD DATA HANDLER
+                $('#btnAdd').click(function(e) {
+                    e.preventDefault();
+
+                    validateNIP();
+
+                    $('input[name=nama]').val("");
+                    $('input[name=username]').val("");
+                    $('input[name=nip]').val("");
+                    $('input[name=email]').val("");
+                    $('input[name=jabatan]').val("");
+                    $(`#role option[value="2"]`).prop('selected', true);
+                    var statusToggle = $(this).find("#status"); 
+                    if (statusToggle.length) {
+                        statusToggle.prop("checked", false); // Set checkbox ke unchecked
+                    }
+
+                    $('input[name=actionType]').val('add');
+
+                    modal.find('.modal-title').text('TAMBAH DATA USER');
+                    modal.modal('show');
+                    modal.on('shown.bs.modal', function () {
+                        $('#nama').focus();
+                    });
+                });
+                //END OF ADD DATA HANDLER
+
+                //EDIT DATA HANDLER
                 $('#dataUserTable').on('click', '.view-detail', function() {
                     var userId = $(this).attr('data');
 
+                    modal.find('.modal-title').text('UBAH DATA USER');
                     modal.modal('show');
                     validateNIP();
 
@@ -288,6 +317,7 @@
                             if (response.user) {
                                 user = response.user
                             }
+                            $('input[name=actionType]').val('edit');
                             $('input[name=id_user]').val(user.id_user);
                             $('input[name=nama]').val(user.nama);
                             $('input[name=username]').val(user.username);
@@ -313,7 +343,7 @@
                 $(document).on('click', '[data-dismiss="modal"]', function () {
                     $('#modalUserDetail').modal('hide');
                 });
-                //END OF LIHAT DATA HANDLER
+                //END OF EDIT DATA HANDLER
 
                 //DELETE DATA HANDLER
                 $('#dataUserTable').on('click', '.delete-data', function() {
@@ -555,7 +585,7 @@
                         var regex = new RegExp("^[0-9\b]+$");
                         var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
                         // for 16 digit number only
-                        if ($this.val().length > 17) {
+                        if ($this.val().length >= 18) {
                             e.preventDefault();
                             return false;
                         }
@@ -572,8 +602,8 @@
                         var pastedText = (e.originalEvent || e).clipboardData.getData('text');
                         var sanitizedText = pastedText.replace(/\D/g, ''); // Hanya angka
                         
-                        if (sanitizedText.length > 16) {
-                            sanitizedText = sanitizedText.substring(0, 16);
+                        if (sanitizedText.length > 18) {
+                            sanitizedText = sanitizedText.substring(0, 18);
                         }
                         
                         $(this).val(sanitizedText);

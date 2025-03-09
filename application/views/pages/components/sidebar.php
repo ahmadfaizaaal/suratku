@@ -16,7 +16,10 @@
                                 </div>
                                 <div class="flex-grow-1 ms-3 me-2">
                                     <h6 class="mb-0"><?= $userLogin->nama; ?></h6>
-                                    <small><?= $userLogin->jabatan; ?></small>
+                                    <?php
+                                        $position = array('1' => 'Administrator', '2' => 'Pegawai', '3' => 'Petugas Dispo');
+                                    ?>
+                                    <small><?= $position[$userLogin->role]; ?></small>
                                 </div>
                                 <a class="btn btn-icon btn-link-secondary avtar" data-bs-toggle="collapse" href="#pc_sidebar_userlink">
                                     <svg class="pc-icon">

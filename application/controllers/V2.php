@@ -258,8 +258,8 @@ class V2 extends CI_Controller
                     }
                 } else if ($actionType == 'edit') {
                     $message = array(
-                        'success' => 'Data sub klasifikasi berhasil diubah!',
-                        'error' => 'Gagal mengubah data sub klasifikasi!'
+                        'success' => 'Data sub klasifikasi berhasil diperbarui!',
+                        'error' => 'Gagal memperbarui data sub klasifikasi!'
                     );
                     $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
                     if (!$exist) {
@@ -332,7 +332,9 @@ class V2 extends CI_Controller
                         echo json_encode($data);
                         break;
                     case "save-changes":
+                        $actionType = $this->input->post('actionType') ?? "";
                         $idUser = $this->input->post('id_user');
+                        $message = array('success' => '', 'error' => '');
                         $param = array(
                             'username' => $this->input->post('username'),
                             'nama' => $this->input->post('nama'),
@@ -342,15 +344,25 @@ class V2 extends CI_Controller
                             'role' => $this->input->post('role'),
                             'status' => $this->input->post('status_choosen')
                         );
-                        $updated = $this->user->updateDataUser(TBL_USER, array('column' => 'id_user', 'value' => $idUser), $param);
-                        if ($updated) {
-                            echo json_encode(['status' => 'success', 'message' => 'Data user berhasil diperbarui!']);
-                        } else {
-                            echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data user.']);
+
+                        if ($actionType == 'add') {
+                            $mandatory = array(
+                                'id_instansi' => $this->session->userdata('id_instansi'),
+                                'password' => password_hash(DEFAULT_CREDENTIAL, PASSWORD_DEFAULT),
+                                'img_profile' => 'default-user.png',
+                            );
+                            $param = array_merge($param, $mandatory);
+                            $executed = $this->user->insertDataUser($param);
+                            $message = array('success' => 'Data user berhasil ditambahkan!', 'error' => 'Gagal menambahkan data user!');
+                        } else if ($actionType == 'edit') {
+                            $executed = $this->user->updateDataUser(TBL_USER, array('column' => 'id_user', 'value' => $idUser), $param);
+                            $message = array('success' => 'Data user berhasil diperbarui!', 'error' => 'Gagal memperbarui data user!');
                         }
-                        break;
-                    case "insert":
-                        
+                        if ($executed) {
+                            echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                        }
                         break;
                     case "delete":
                         $idUser = $this->uri->segment(5);
