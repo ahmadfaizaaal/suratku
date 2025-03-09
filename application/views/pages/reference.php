@@ -89,7 +89,7 @@
                                             <th class="text-center text-middle" width="15%">
                                                 Aksi
                                             </th>
-                                            <th class="text-center" width="17%">
+                                            <th class="text-center" width="18%">
                                                 Kode
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Kode"></input>
                                             </th>
@@ -97,7 +97,7 @@
                                                 Keterangan
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Keterangan"></input>
                                             </th>
-                                            <th class="text-center" width="43%">
+                                            <th class="text-center" width="42%">
                                                 Uraian
                                                 <input role="presentation" autocomplete="off" oninput="event.stopPropagation()" onclick="event.stopPropagation()" type="text" class="mt-3 form-control form-control-sm"  placeholder="Cari Uraian"></input>
                                             </th>
@@ -671,12 +671,16 @@
                             let firstKode = null;
                             let firstLabel = null;
                             let activeKode = kode;
+                            let foundActiveKode = false;
                             
                             $.each(response.parent, function(index, parent) {
-                                if (index === 0 && !activeKode) {
+                                if (index === 0) {
                                     firstKode = parent.kode;
                                     firstLabel = parent.nama;
                                     $('input[name=idKlasifikasi]').val(parent.id_klasifikasi);
+                                }
+                                if (activeKode === parent.kode) {
+                                    foundActiveKode = true;
                                 }
                                 var li = `
                                     <li>
@@ -689,18 +693,15 @@
                                 ul.append(li);
                             });
 
-                            let selectedKode = activeKode || firstKode;
+                            let selectedKode = foundActiveKode ? activeKode : firstKode;
                             let selectedLabel = response.parent.find(p => p.kode === selectedKode)?.nama || firstLabel;
 
                             $(".show-sub-data").removeClass("active");
                             $(`.show-sub-data[data="${selectedKode}"]`).first().addClass("active");
-                            
-                            // $(".show-sub-data").first().addClass("active");
 
                             if (selectedKode) {
                                 setTimeout(() => {
                                     loadDataSubKlasifikasi(selectedKode, selectedLabel);
-                                    // loadDataSubKlasifikasi(firstKode, firstLabel);
                                 }, 100);
                             }
                         },
@@ -847,14 +848,12 @@
                     parentDiv.find('.error-message').remove();
 
                     let isEmpty = elements.some(el => !el.val());
-                    // let isEmpty = elements.some(el => !el.val() || el.val().endsWith('.'));
 
                     if (isEmpty) {
                         if (ids.length > 1) {
                             parentDiv.append(`<small class="ms-2 text-danger ps-1 error-message">${errorMsg}</small>`);
                         } else {
                             parentDiv.append(`<small class="ms-2 text-danger ps-1 error-message">${errorMsg}</small>`);
-                            // elements[0].after(`<small class="text-center text-danger ps-1 error-message">${errorMsg}</small>`);
                         }
                         setTimeout(function () {
                             parentDiv.find('.error-message').fadeOut(300, function () {
