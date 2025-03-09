@@ -176,16 +176,104 @@ class V2 extends CI_Controller
                 $data = $this->initiateUserProfileData();
 				load_page('pages/reference', SYS_NAME, $data);
 				break;
-			case "list-parent":
+			case "list-parent-klasifikasi":
                 $data['parent'] = $this->surat->getParentKlasifikasi();
                 echo json_encode($data);
 				break;
-			case "sub-klasifikasi":
+            case "list-klasifikasi-all":
+                $excludeCode = $this->uri->segment(4);
+                if (!empty($excludeCode)) {
+                    $data['klasifikasi'] = $this->surat->getListKlasifikasi($excludeCode);
+                } else {
+                    $data['klasifikasi'] = $this->surat->getListKlasifikasi();
+                }
+                echo json_encode($data);
+                break;
+			case "list-sub-klasifikasi":
                 $parent = $this->uri->segment(4) ?? "HK";
                 $data['subKlasifikasi'] = $this->surat->getSubKlasifikasi($parent);
                 echo json_encode($data);
                 break;
-            case "app":
+            case "get-detail":
+                $idKlasifikasi = $this->uri->segment(4);
+                $data['klasifikasi'] = $this->surat->getDetailKlasifikasi($idKlasifikasi);
+                echo json_encode($data);
+                break;
+            case "child-availability":
+                $kode = $this->uri->segment(4);
+                $child = $this->surat->getChildKlasifikasi($kode);
+                if (!empty($child)) {
+                    $data['hasChild'] = true;
+                    $data['child'] = $child;
+                } else {
+                    $data['hasChild'] = false;
+                }
+                echo json_encode($data);
+                break;
+            case "delete":
+                $param = $this->input->post('param');
+                if (!empty($param)) {
+                    if (is_array($param)) {
+                        foreach ($param as $obj) {
+                            $deleted = $this->surat->deleteDataKlasifikasi($obj['id_klasifikasi']);
+                        }
+                    } else {
+                        $deleted = $this->surat->deleteDataKlasifikasi($param);
+                    }
+
+                    if ($deleted) {
+                        echo json_encode(['status' => 'success', 'message' => 'Data klasifikasi berhasil dihapus!']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data klasifikasi.']);
+                    }
+                }
+                break;
+            case "save-changes":
+                $executed = false;
+                $idKlasifikasi = $this->input->post('idKlasifikasi') ?? null;
+                $param = array(
+                    'id_user' => (int) $this->session->userdata('id_user'),
+                    'id_parent' => (int) $this->input->post('parent') ?? 0,
+                    'kode' => $this->input->post('first') . ($this->input->post('second') ?? ""),
+                    'nama' => $this->input->post('keterangan'),
+                    'uraian' => $this->input->post('uraian') ?? "",
+                    'status' => $this->input->post('status')
+                );
+
+                $actionType = $this->input->post('actionType') ?? "";
+                $message = array(
+                    'success' => '',
+                    'error' => ''
+                );
+                if ($actionType == 'add') {
+                    $message = array(
+                        'success' => 'Data sub klasifikasi berhasil ditambahkan!',
+                        'error' => 'Gagal menambahkan data sub klasifikasi!'
+                    );
+                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+                    if (!$exist) {
+                        $executed = $this->surat->insertDataKlasifikasi($param);
+                    } else {
+                        $message['error'] = 'Kode klasifikasi sudah ada!';
+                    }
+                } else if ($actionType == 'edit') {
+                    $message = array(
+                        'success' => 'Data sub klasifikasi berhasil diubah!',
+                        'error' => 'Gagal mengubah data sub klasifikasi!'
+                    );
+                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+                    if (!$exist) {
+                        $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
+                    } else {
+                        $message['error'] = 'Kode klasifikasi sudah ada!';
+                    }
+                }
+
+                if ($executed) {
+                    echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                }
                 break;
 			default:
 				redirect(404);
@@ -260,6 +348,9 @@ class V2 extends CI_Controller
                         } else {
                             echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data user.']);
                         }
+                        break;
+                    case "insert":
+                        
                         break;
                     case "delete":
                         $idUser = $this->uri->segment(5);

@@ -54,28 +54,28 @@
                             </a>
                         </li>
                         <li class="pc-item pc-hasmenu">
-                            <a href="#persuratan" class="pc-link">
+                            <a href="javascript:;" class="pc-link">
                                 <span class="pc-micon"><i class="ti ti-mail"></i></span>
                                 <span class="pc-mtext">Persuratan</span>
                                 <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                             </a>
                             <ul class="pc-submenu">
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Transaksi Surat<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Transaksi Surat<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
                                     </ul>
                                 </li>
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Buku Agenda<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Buku Agenda<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
                                     </ul>
                                 </li>
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Galeri File<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Galeri File<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li class="pc-item pc-hasmenu">
-                            <a href="#!" class="pc-link">
+                            <a href="javascript:;" class="pc-link">
                                 <span class="pc-micon"><i class="ti ti-settings"></i></span>
                                 <span class="pc-mtext">Pengaturan</span>
                                 <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
@@ -101,7 +101,7 @@
                                 <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/instansi' ?>">Instansi</a></li>
                                 <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/users' ?>">Users</a></li>
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="#!" class="pc-link">Manajemen Data<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Manajemen Data<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/app/backup' ?>">Pencadangan</a></li>
                                         <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/setting/app/restore' ?>">Pemulihan</a></li>

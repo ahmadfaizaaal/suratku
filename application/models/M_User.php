@@ -58,6 +58,16 @@ class M_User extends CI_Model
         $this->db->update(TBL_USER, ['remember_token' => $token]);
     }
 
+    public function insertDataUser($data)
+    {
+        $this->db->insert(TBL_USER, $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function deleteDataUser($userID)
     {
         $this->db->where('id_user', $userID);

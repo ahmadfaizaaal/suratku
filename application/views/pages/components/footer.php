@@ -12,9 +12,12 @@
         <script src="<?= BASE_THEME; ?>js/sweetalerts/sweetalert2.all.js" type="text/javascript"></script>
         <script src="<?= BASE_THEME; ?>js/sweetalerts/sweet-alerts.js" type="text/javascript"></script>
         <script src="<?= BASE_THEME; ?>js/plugins/apexcharts.min.js"></script>
+        <!-- <script src="<?= BASE_THEME ?>js/plugins/select2.full.min.js" type="text/javascript"></script>
+        <script src="<?= BASE_THEME ?>js/plugins/form-select2.js" type="text/javascript"></script> -->
         <!-- <script src="<?= BASE_THEME; ?>js/pages/dashboard-default.js"></script> -->
         <!-- [Page Specific JS] end -->
         <!-- Required Js -->
+        
         <script src="<?= BASE_THEME; ?>js/plugins/popper.min.js"></script>
         <script src="<?= BASE_THEME; ?>js/plugins/bootstrap.min.js"></script>
         <!-- <script src="<?= BASE_THEME; ?>js/plugins/simplebar.min.js"></script> -->

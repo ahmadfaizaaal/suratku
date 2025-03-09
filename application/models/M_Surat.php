@@ -110,12 +110,72 @@ class M_Surat extends CI_Model
         }
     }
 
+    public function checkIsExistKlasifikasi($kode) {
+        $result = $this->db->get_where(TBL_KLASIFIKASI, ['kode' => $kode]);
+        if ($result->num_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getDetailKlasifikasi($id)
+    {
+        return $this->db->get_where(TBL_KLASIFIKASI, ['id_klasifikasi' => $id])->row();
+    }
+
     public function getParentKlasifikasi()
     {
         $this->db->select('id_klasifikasi, kode, nama');
         $this->db->from(TBL_KLASIFIKASI);
         $this->db->where('id_parent', 0);
         $result = $this->db->get();
+        if ($result->num_rows() > 0) {
+            return $result->result();
+        } else {
+            return null;
+        }
+    }
+
+    public function getChildKlasifikasi($kode)
+    {
+        $query = "WITH RECURSIVE klasifikasi_tree AS (
+                    SELECT id_klasifikasi, id_parent, kode, nama
+                    FROM tbl_klasifikasi_new
+                    WHERE kode = '$kode'
+
+                    UNION ALL
+
+                    SELECT tk.id_klasifikasi, tk.id_parent, tk.kode, tk.nama
+                    FROM tbl_klasifikasi_new tk
+                    INNER JOIN klasifikasi_tree kt ON tk.id_parent = kt.id_klasifikasi
+                )
+                SELECT * FROM klasifikasi_tree";
+        $result = $this->db->query($query);
+        if ($result->num_rows() > 1) {
+            return $result->result();
+        } else {
+            return null;
+        }
+    }
+
+    public function getListKlasifikasi($excludeCode = null)
+    {
+        $query = "SELECT 
+                    id_klasifikasi, 
+                    id_parent, 
+                    kode, 
+                    CASE 
+                        WHEN kode NOT LIKE '%.%' AND kode REGEXP '^[A-Z]+[0-9]+$' THEN 2
+                        WHEN kode NOT LIKE '%.%' THEN 1
+                        ELSE LENGTH(kode) - LENGTH(REPLACE(kode, '.', '')) + 2
+                    END AS level
+                FROM tbl_klasifikasi_new
+                HAVING level < 4";
+        if (!empty($excludeCode)) {
+            $query .= " AND kode != '$excludeCode'";
+        }
+        $result = $this->db->query($query);
         if ($result->num_rows() > 0) {
             return $result->result();
         } else {
@@ -155,7 +215,9 @@ class M_Surat extends CI_Model
                         nama,
                         uraian,
                         id_klasifikasi,
-                        id_parent
+                        id_parent,
+                        kode,
+                        level
                     FROM klasifikasi_tree
                     ORDER BY path;";
         $result = $this->db->query($query);
@@ -163,6 +225,38 @@ class M_Surat extends CI_Model
             return $result->result();
         } else {
             return null;
+        }
+    }
+
+    public function insertDataKlasifikasi($data)
+    {
+        $this->db->insert(TBL_KLASIFIKASI, $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateDataKlasifikasi($primaryKey, $data)
+    {
+        $this->db->where($primaryKey['column'], $primaryKey['value']);
+        $this->db->update(TBL_KLASIFIKASI, $data);
+        if ($this->db->affected_rows() > 0 || $this->db->error()['code'] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteDataKlasifikasi($idKlasifikasi)
+    {
+        $this->db->where('id_klasifikasi', $idKlasifikasi);
+        $this->db->delete(TBL_KLASIFIKASI);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

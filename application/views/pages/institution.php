@@ -101,7 +101,7 @@
                                     <label class="col-md-3 label-control" for="logo">Logo Instansi</label>
                                     <div class="col-md-9">
                                         <div class="dropzone text-start">
-                                            <input type="hidden" id="prev_logo" name="prev_logo" value="">
+                                            <input type="hidden" id="prev_logo" name="prev_logo" value="<?= $instansi['logo'];?>">
                                             <input type="file" class="dropzone-upload" name="logo" id="logo" accept="image/jpg, image/jpeg, image/png">
                                             <!-- <label for="logo" class="custom-file-label" id="label-image-profile"></label> -->
                                         </div>

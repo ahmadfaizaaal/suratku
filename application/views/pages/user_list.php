@@ -54,6 +54,9 @@
                             <div class="card-header">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="mb-0 fs-5 fw-bold text-success" id="rekapTitle">DAFTAR PENGGUNA SISTEM </h6>
+                                    <a href="javascript:;" data="" class="btn btn-sm btn-success fs-7 align-items-center justify-content-center" id="btnAdd">
+                                        <i class="ti ti-plus me-1"></i> Tambah Data
+                                    </a>
                                 </div>
                             </div>
                             <div class="card-body mb-5">
@@ -395,7 +398,7 @@
                                     <tr>
                                         <td class="text-center">
                                             <a href="javascript:;" data="${user.id_user}" class="btn btn-sm btn-success view-detail fs-7 me-2" data-toggle="modal" data-target="#modalUserDetail">
-                                                <i class="ti ti-eye"></i> Lihat
+                                                <i class="ti ti-pencil"></i> Ubah
                                             </a>
                                             <a href="javascript:;" data="${user.id_user}" class="btn btn-sm btn-danger delete-data fs-7">
                                                 <i class="ti ti-trash"></i> Hapus

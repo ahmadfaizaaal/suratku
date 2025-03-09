@@ -19,19 +19,25 @@
         <link rel="stylesheet" href="<?= BASE_THEME; ?>css/style-preset.css" >
 
         <!-- EXTERNAL CSS RESOURCES -->
-        <link rel="stylesheet" type="text/css" href="<?= BASE_THEME ?>css/selects/select2.min.css">
+        <!-- <link rel="stylesheet" type="text/css" href="<?= BASE_THEME ?>css/selects/select2.min.css"> -->
         <link href="<?= BASE_THEME; ?>vendor/simple-datatables/style.css" rel="stylesheet">
 	    <link href="<?= BASE_THEME; ?>vendor/dataTables/dataTables.bootstrap5.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.css">
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
         <!-- EXTERNAL JS RESOURCES -->
-        <script src="<?= BASE_THEME; ?>js/jquery/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- <script src="<?= BASE_THEME; ?>js/jquery/jquery.min.js"></script> -->
         <script src="<?= BASE_THEME; ?>vendor/simple-datatables/simple-datatables.js"></script>
         <script src="<?= BASE_THEME; ?>vendor/dataTables/jquery.dataTables.min.js"></script>
         <script src="<?= BASE_THEME; ?>vendor/dataTables/dataTables.bootstrap5.min.js"></script>
         <script src="<?= BASE_THEME; ?>vendor/dataTables/dataTables.rowsGroup.js"></script>
         <script src="<?= BASE_THEME; ?>vendor/dataTables/dataTables.responsive.min.js"></script>
+        <!-- jQuery (wajib untuk Select2) -->
+        <!-- Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
     </head>
     <!-- [Head] end -->
     <!-- [Body] Start -->
