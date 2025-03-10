@@ -28,13 +28,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
 
 $development_host   = ['localhost', '127.0.0.1', '::1'];
-$internal_host      = '34.50.91.46';
-$gcp_host           = '34.50.91.46';
-$gcp_subdir         = '/suratku';
-$development_subdir = '/suratku';
-$protocol           = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
-$request_host       = $_SERVER['HTTP_HOST'];
-$config['base_url'] = $request_host == $internal_host ? $protocol.$internal_host : ($request_host == $gcp_host ? $protocol.$gcp_host.$gcp_subdir : (in_array($request_host, $development_host) ? $protocol.$request_host.$development_subdir : "https://draaf.my.id/suratku"));
+$internal_host      = 'IP_PUBLIC'; 
+$gcp_host           = 'IP_PUBLIC';
+$gcp_subdir         = '/suratku'; 
+$development_subdir = '/suratku'; 
+$protocol           = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+
+// Pastikan $_SERVER['HTTP_HOST'] sudah terdefinisi
+$request_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+// Tentukan BASE_URL
+if ($request_host == $internal_host) {
+    $base_url = $protocol . $internal_host;
+} elseif ($request_host == $gcp_host) {
+    $base_url = $protocol . $gcp_host . $gcp_subdir;
+} elseif (in_array($request_host, $development_host)) {
+    $base_url = $protocol . $request_host . $development_subdir;
+} else {
+    $base_url = "https://draaf.my.id/suratku";
+}
+
+// Pastikan $base_url adalah string sebelum define()
+if (is_string($base_url) && !empty($base_url)) {
+    define('BASE_URL', rtrim($base_url, '/') . '/');
+    define('BASE_THEME', BASE_URL . 'assets/');
+} else {
+    die("Error: BASE_URL tidak valid");
+}
+
 
 /*
 |--------------------------------------------------------------------------
