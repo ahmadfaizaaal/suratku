@@ -27,9 +27,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $config['base_url'] = "http://" . $_SERVER['HTTP_HOST'];
 // $config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
 
-$development_host   = ['localhost', '127.0.0.1', '::1'];
-$internal_host      = 'IP_PUBLIC'; 
-$gcp_host           = 'IP_PUBLIC';
+$development_host   = ['localhost', '127.0.0.1'];
+$internal_host      = '34.50.91.46'; 
+$gcp_host           = '34.50.91.46';
 $gcp_subdir         = '/suratku'; 
 $development_subdir = '/suratku'; 
 $protocol           = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
