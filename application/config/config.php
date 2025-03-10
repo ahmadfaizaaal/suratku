@@ -38,7 +38,9 @@ $protocol           = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
 $request_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 
 // Tentukan BASE_URL
-if ($request_host == $internal_host) {
+if (isset($_SERVER['HTTP_CF_VISITOR'])) {
+    $base_url = "https://draaf.my.id/suratku";
+} elseif ($request_host == $internal_host) {
     $base_url = $protocol . $internal_host;
 } elseif ($request_host == $gcp_host) {
     $base_url = $protocol . $gcp_host . $gcp_subdir;
