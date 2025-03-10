@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
+	'hostname' => '34.50.91.46',
 	'username' => 'root',
-	'password' => '',
+	'password' => 'DraafApp_2025!',
 	'database' => 'suratku_db',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
