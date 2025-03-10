@@ -24,8 +24,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 // $config['base_url'] = '';
-$config['base_url'] = "http://" . $_SERVER['HTTP_HOST'];
-$config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
+// $config['base_url'] = "http://" . $_SERVER['HTTP_HOST'];
+// $config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
+
+$development_host   = ['localhost', '127.0.0.1', '::1'];
+$internal_host      = '34.50.91.46';
+$gcp_host           = '34.50.91.46';
+$gcp_subdir         = '/suratku';
+$development_subdir = '/suratku';
+$protocol           = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
+$request_host       = $_SERVER['HTTP_HOST'];
+$config['base_url'] = $request_host == $internal_host ? $protocol.$internal_host : ($request_host == $gcp_host ? $protocol.$gcp_host.$gcp_subdir : (in_array($request_host, $development_host) ? $protocol.$request_host.$development_subdir : "https://draaf.my.id/suratku"));
 
 /*
 |--------------------------------------------------------------------------

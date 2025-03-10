@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('BASE_URL', "http://" . $_SERVER['HTTP_HOST'] . preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/');
+// define('BASE_URL', "http://" . $_SERVER['HTTP_HOST'] . preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/');
+define('BASE_URL', rtrim($base_url, '/') . '/');
 define('BASE_THEME', BASE_URL . 'assets/');
 define('SYS_NAME', 'Suratku. | PA Sumbawa Besar');
 define('TBL_INSTANSI', 'tbl_instansi');
