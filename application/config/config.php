@@ -32,14 +32,16 @@ $internal_host      = '34.50.91.46';
 $gcp_host           = '34.50.91.46';
 $gcp_subdir         = '/suratku'; 
 $development_subdir = '/suratku'; 
-$protocol           = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+$cloudflare_host    = 'draaf.my.id'; // Sesuaikan dengan domain yang digunakan di Cloudflare
+
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
 
 // Pastikan $_SERVER['HTTP_HOST'] sudah terdefinisi
 $request_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
 
-// Tentukan BASE_URL
-if (isset($_SERVER['HTTP_CF_VISITOR'])) {
-    $base_url = "https://draaf.my.id/suratku";
+// Tentukan BASE_URL dengan memeriksa domain dari Cloudflare
+if ($request_host == $cloudflare_host) {
+    $base_url = "https://draaf.my.id/suratku"; // Arahkan ke domain yang benar
 } elseif ($request_host == $internal_host) {
     $base_url = $protocol . $internal_host;
 } elseif ($request_host == $gcp_host) {
@@ -47,7 +49,7 @@ if (isset($_SERVER['HTTP_CF_VISITOR'])) {
 } elseif (in_array($request_host, $development_host)) {
     $base_url = $protocol . $request_host . $development_subdir;
 } else {
-    $base_url = "https://draaf.my.id/suratku";
+    $base_url = "https://draaf.my.id/suratku"; // Default jika tidak sesuai
 }
 
 // Pastikan $base_url adalah string sebelum define()
@@ -57,6 +59,7 @@ if (is_string($base_url) && !empty($base_url)) {
 } else {
     die("Error: BASE_URL tidak valid");
 }
+
 
 
 /*
