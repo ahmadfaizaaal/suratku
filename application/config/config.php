@@ -27,22 +27,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $config['base_url'] = "http://" . $_SERVER['HTTP_HOST'];
 // $config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
 
-/*
-$development_host   = ['localhost', '127.0.0.1'];
-$internal_host      = '34.50.91.46'; 
-$gcp_host           = '34.50.91.46';
-$gcp_subdir         = '/suratku'; 
-$development_subdir = '/suratku'; 
-$cloudflare_host    = 'draaf.my.id'; // Sesuaikan dengan domain yang digunakan di Cloudflare
-
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-
-// Pastikan $_SERVER['HTTP_HOST'] sudah terdefinisi
-$request_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-//$request_host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
-*/
-
-//error_log("Detected HTTP_HOST: " . $request_host);
 $is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
     || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') 
     || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
@@ -53,7 +37,6 @@ $base_url = ($is_https ? "https" : "http") . "://{$host}/suratku/";
 
 $config['base_url'] = rtrim($base_url, '/') . '/';
 
-// Tambahkan Constants
 if (!defined('BASE_URL')) {
     define('BASE_URL', $config['base_url']);
 }

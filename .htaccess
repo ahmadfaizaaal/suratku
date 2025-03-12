@@ -16,3 +16,8 @@
   </FilesMatch>
 </IfModule>
 
+<FilesMatch "\.(woff|woff2|ttf|eot|otf)$">
+    Header set Content-Type "application/font-woff2"
+</FilesMatch>
+
+
