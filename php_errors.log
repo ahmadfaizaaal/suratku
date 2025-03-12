@@ -1,0 +1,25 @@
+Tes log dari CLI ke /var/www/html/suratku/php_error.log[11-Mar-2025 02:05:35 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:05:35 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:06:03 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:06:03 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:09:34 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:09:34 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:17:28 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:17:28 UTC] PHP Notice:  Undefined index: log_path in /var/www/html/suratku/system/core/Log.php on line 128
+[11-Mar-2025 02:17:28 UTC] PHP Notice:  Undefined index: log_path in /var/www/html/suratku/system/core/Log.php on line 128
+[11-Mar-2025 02:17:28 UTC] PHP Warning:  mkdir(): Invalid path in /var/www/html/suratku/system/core/Log.php on line 132
+[11-Mar-2025 02:17:28 UTC] PHP Notice:  Undefined index: log_threshold in /var/www/html/suratku/system/core/Log.php on line 139
+[11-Mar-2025 02:17:28 UTC] PHP Notice:  Undefined index: log_threshold in /var/www/html/suratku/system/core/Log.php on line 143
+[11-Mar-2025 02:20:31 UTC] PHP Parse error:  syntax error, unexpected '{' in /var/www/html/suratku/application/config/config.php on line 60
+[11-Mar-2025 02:20:31 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[11-Mar-2025 02:20:31 UTC] PHP Parse error:  syntax error, unexpected '{' in /var/www/html/suratku/application/config/config.php on line 60
+[11-Mar-2025 02:20:31 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
+[11-Mar-2025 02:22:00 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:22:00 UTC] PHP Notice:  Undefined index: log_path in /var/www/html/suratku/system/core/Log.php on line 128
+[11-Mar-2025 02:22:00 UTC] PHP Notice:  Undefined index: log_path in /var/www/html/suratku/system/core/Log.php on line 128
+[11-Mar-2025 02:22:00 UTC] PHP Warning:  mkdir(): Invalid path in /var/www/html/suratku/system/core/Log.php on line 132
+[11-Mar-2025 02:22:00 UTC] PHP Notice:  Undefined index: log_threshold in /var/www/html/suratku/system/core/Log.php on line 139
+[11-Mar-2025 02:22:00 UTC] PHP Notice:  Undefined index: log_threshold in /var/www/html/suratku/system/core/Log.php on line 143
+[11-Mar-2025 02:23:25 UTC] Detected HTTP_HOST: draaf.my.id
+[11-Mar-2025 02:30:52 UTC] Detected HTTP_HOST: 34.50.91.46:80
+[11-Mar-2025 03:02:46 UTC] PHP Notice:  Undefined index: HTTP_HOST in /var/www/html/suratku/application/config/config.php on line 62

@@ -15,7 +15,8 @@ class Home extends CI_Controller
 
     public function index()
     {
-        redirect('v2');
+        //redirect('v2');
+	redirect(BASE_URL . 'v2');
     }
 
     

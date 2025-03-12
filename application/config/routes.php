@@ -53,6 +53,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // $route['404_override'] = '';
 // $route['translate_uri_dashes'] = FALSE;
 $route['default_controller'] = 'home';
+$route['v2'] = 'v2'; // Pastikan v2 controller dikenali
+$route['v2/(:any)'] = 'v2/$1'; // Untuk menangani semua request ke v2
 $route['404_override'] = 'auth/error404';
 $route['translate_uri_dashes'] = TRUE;
 

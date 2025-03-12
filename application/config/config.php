@@ -23,10 +23,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-// $config['base_url'] = '';
+//$config['base_url'] = 'https://draaf.my.id/suratku/';
 // $config['base_url'] = "http://" . $_SERVER['HTTP_HOST'];
 // $config['base_url'] .= preg_replace('@/+$@', '', dirname($_SERVER['SCRIPT_NAME'])) . '/';
 
+/*
 $development_host   = ['localhost', '127.0.0.1'];
 $internal_host      = '34.50.91.46'; 
 $gcp_host           = '34.50.91.46';
@@ -38,26 +39,26 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https:
 
 // Pastikan $_SERVER['HTTP_HOST'] sudah terdefinisi
 $request_host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+//$request_host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
+*/
 
-// Tentukan BASE_URL dengan memeriksa domain dari Cloudflare
-if ($request_host == $cloudflare_host) {
-    $base_url = "https://draaf.my.id/suratku"; // Arahkan ke domain yang benar
-} elseif ($request_host == $internal_host) {
-    $base_url = $protocol . $internal_host;
-} elseif ($request_host == $gcp_host) {
-    $base_url = $protocol . $gcp_host . $gcp_subdir;
-} elseif (in_array($request_host, $development_host)) {
-    $base_url = $protocol . $request_host . $development_subdir;
-} else {
-    $base_url = "https://draaf.my.id/suratku"; // Default jika tidak sesuai
+//error_log("Detected HTTP_HOST: " . $request_host);
+$is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') 
+    || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+
+$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+
+$base_url = ($is_https ? "https" : "http") . "://{$host}/suratku/";	
+
+$config['base_url'] = rtrim($base_url, '/') . '/';
+
+// Tambahkan Constants
+if (!defined('BASE_URL')) {
+    define('BASE_URL', $config['base_url']);
 }
-
-// Pastikan $base_url adalah string sebelum define()
-if (is_string($base_url) && !empty($base_url)) {
-    define('BASE_URL', rtrim($base_url, '/') . '/');
+if (!defined('BASE_THEME')) {
     define('BASE_THEME', BASE_URL . 'assets/');
-} else {
-    die("Error: BASE_URL tidak valid");
 }
 
 
@@ -262,7 +263,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
