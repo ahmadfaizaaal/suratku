@@ -77,9 +77,11 @@
                             <div class="card-header">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="mb-0 fs-5 fw-bold text-success" id="subKlasifikasiLabel"></h6>
+                                    <?php if ($this->session->userdata('role') == 1) : ?>
                                     <a href="javascript:;" data="" class="btn btn-sm btn-success fs-7 align-items-center justify-content-center" id="btnAdd">
                                         <i class="ti ti-plus me-1"></i> Tambah Data
                                     </a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="card-body mb-5">
@@ -610,6 +612,10 @@
                 });
 
                 function loadDataSubKlasifikasi(kode, label) {
+                    const disabled = '<?= $this->session->userdata('role') == '1' ? '' : 'disabled'; ?>';
+                    const colorButtonEdit = disabled === '' ? 'btn-success' : 'btn-outline-success';
+                    const colorButtonDelete = disabled === '' ? 'btn-danger' : 'btn-outline-danger';
+
                     $.ajax({
                         type: 'ajax',
                         method: 'post',
@@ -634,10 +640,10 @@
                                 var row = `
                                     <tr>
                                         <td class="text-center align-top">
-                                            <a href="javascript:;" data="${data.id_klasifikasi}" data-kode="${data.kode}" class="btn btn-sm btn-success edit-data fs-7 me-2" data-toggle="modal" data-target="#modalKlasifikasiDetail">
+                                            <a href="javascript:;" data="${data.id_klasifikasi}" data-kode="${data.kode}" class="btn btn-sm ${colorButtonEdit} edit-data fs-7 me-2 ${disabled}" data-toggle="modal" data-target="#modalKlasifikasiDetail">
                                                 <i class="ti ti-pencil"></i> Ubah
                                             </a>
-                                            <a href="javascript:;" data="${data.id_klasifikasi}" data-kode="${data.kode}" class="btn btn-sm btn-danger delete-data fs-7">
+                                            <a href="javascript:;" data="${data.id_klasifikasi}" data-kode="${data.kode}" class="btn btn-sm ${colorButtonDelete} delete-data fs-7 ${disabled}">
                                                 <i class="ti ti-trash"></i> Hapus
                                             </a>
                                         </td>

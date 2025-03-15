@@ -166,6 +166,234 @@ class V2 extends CI_Controller
 		}
     }
 
+    public function transaksi($action = null) {
+        if (!$this->session->userdata('username')) {
+            redirect('v2');
+        }
+
+        switch ($action) {
+			case null:
+                redirect(404);
+				break;
+			case "surat-masuk":
+                $urlParam = $this->uri->segment(4);
+                switch ($urlParam) {
+                    case null:
+                        $data = $this->initiateUserProfileData();                        
+                        load_page('pages/surat_masuk', SYS_NAME, $data);
+                        break;
+                    case "list":
+                        $data['users'] = $this->user->getListUsers();
+                        echo json_encode($data);
+                        break;
+                    case "detail":
+                        $idUser = $this->uri->segment(5);
+                        $data['user'] = $this->user->getDataUser('id_user', $idUser);
+                        echo json_encode($data);
+                        break;
+                    case "save-changes":
+                        $actionType = $this->input->post('actionType') ?? "";
+                        $idUser = $this->input->post('id_user');
+                        $message = array('success' => '', 'error' => '');
+                        $param = array(
+                            'username' => $this->input->post('username'),
+                            'nama' => $this->input->post('nama'),
+                            'nip' => $this->input->post('nip'),
+                            'email' => $this->input->post('email') ?? "-",
+                            'jabatan' => $this->input->post('jabatan'),
+                            'role' => $this->input->post('role'),
+                            'status' => $this->input->post('status_choosen')
+                        );
+
+                        if ($actionType == 'add') {
+                            $mandatory = array(
+                                'id_instansi' => $this->session->userdata('id_instansi'),
+                                'password' => password_hash(DEFAULT_CREDENTIAL, PASSWORD_DEFAULT),
+                                'img_profile' => 'default-user.png',
+                                'paraf' => 'default-image.png',
+                            );
+                            $param = array_merge($param, $mandatory);
+                            $executed = $this->user->insertDataUser($param);
+                            $message = array('success' => 'Data user berhasil ditambahkan!', 'error' => 'Gagal menambahkan data user!');
+                        } else if ($actionType == 'edit') {
+                            $executed = $this->user->updateDataUser(TBL_USER, array('column' => 'id_user', 'value' => $idUser), $param);
+                            $message = array('success' => 'Data user berhasil diperbarui!', 'error' => 'Gagal memperbarui data user!');
+                        }
+                        if ($executed) {
+                            echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                        }
+                        break;
+                    case "delete":
+                        $idUser = $this->uri->segment(5);
+                        $deleted = $this->user->deleteDataUser($idUser);
+                        if ($deleted) {
+                            echo json_encode(['status' => 'success', 'message' => 'Data user berhasil dihapus!']);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data user.']);
+                        }
+                        break;
+                    default:
+                        redirect(404);
+                        break;
+                }
+                break;
+            case "surat-keluar":
+                $urlParam = $this->uri->segment(4);
+                switch ($urlParam) {
+                    case null:
+                        $data = $this->initiateUserProfileData();                        
+                        load_page('pages/user_list', SYS_NAME, $data);
+                        break;
+                    case "list":
+                        $data['users'] = $this->user->getListUsers();
+                        echo json_encode($data);
+                        break;
+                    case "detail":
+                        $idUser = $this->uri->segment(5);
+                        $data['user'] = $this->user->getDataUser('id_user', $idUser);
+                        echo json_encode($data);
+                        break;
+                    case "save-changes":
+                        $actionType = $this->input->post('actionType') ?? "";
+                        $idUser = $this->input->post('id_user');
+                        $message = array('success' => '', 'error' => '');
+                        $param = array(
+                            'username' => $this->input->post('username'),
+                            'nama' => $this->input->post('nama'),
+                            'nip' => $this->input->post('nip'),
+                            'email' => $this->input->post('email') ?? "-",
+                            'jabatan' => $this->input->post('jabatan'),
+                            'role' => $this->input->post('role'),
+                            'status' => $this->input->post('status_choosen')
+                        );
+
+                        if ($actionType == 'add') {
+                            $mandatory = array(
+                                'id_instansi' => $this->session->userdata('id_instansi'),
+                                'password' => password_hash(DEFAULT_CREDENTIAL, PASSWORD_DEFAULT),
+                                'img_profile' => 'default-user.png',
+                            );
+                            $param = array_merge($param, $mandatory);
+                            $executed = $this->user->insertDataUser($param);
+                            $message = array('success' => 'Data user berhasil ditambahkan!', 'error' => 'Gagal menambahkan data user!');
+                        } else if ($actionType == 'edit') {
+                            $executed = $this->user->updateDataUser(TBL_USER, array('column' => 'id_user', 'value' => $idUser), $param);
+                            $message = array('success' => 'Data user berhasil diperbarui!', 'error' => 'Gagal memperbarui data user!');
+                        }
+                        if ($executed) {
+                            echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                        }
+                        break;
+                    case "delete":
+                        $idUser = $this->uri->segment(5);
+                        $deleted = $this->user->deleteDataUser($idUser);
+                        if ($deleted) {
+                            echo json_encode(['status' => 'success', 'message' => 'Data user berhasil dihapus!']);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data user.']);
+                        }
+                        break;
+                    default:
+                        redirect(404);
+                        break;
+                }
+                break;
+			case "list-sub-klasifikasi":
+                $parent = $this->uri->segment(4) ?? "HK";
+                $data['subKlasifikasi'] = $this->surat->getSubKlasifikasi($parent);
+                echo json_encode($data);
+                break;
+            case "get-detail":
+                $idKlasifikasi = $this->uri->segment(4);
+                $data['klasifikasi'] = $this->surat->getDetailKlasifikasi($idKlasifikasi);
+                echo json_encode($data);
+                break;
+            case "child-availability":
+                $kode = $this->uri->segment(4);
+                $child = $this->surat->getChildKlasifikasi($kode);
+                if (!empty($child)) {
+                    $data['hasChild'] = true;
+                    $data['child'] = $child;
+                } else {
+                    $data['hasChild'] = false;
+                }
+                echo json_encode($data);
+                break;
+            case "delete":
+                $param = $this->input->post('param');
+                if (!empty($param)) {
+                    if (is_array($param)) {
+                        foreach ($param as $obj) {
+                            $deleted = $this->surat->deleteDataKlasifikasi($obj['id_klasifikasi']);
+                        }
+                    } else {
+                        $deleted = $this->surat->deleteDataKlasifikasi($param);
+                    }
+
+                    if ($deleted) {
+                        echo json_encode(['status' => 'success', 'message' => 'Data klasifikasi berhasil dihapus!']);
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data klasifikasi.']);
+                    }
+                }
+                break;
+            case "save-changes":
+                $executed = false;
+                $idKlasifikasi = $this->input->post('idKlasifikasi') ?? null;
+                $param = array(
+                    'id_user' => (int) $this->session->userdata('id_user'),
+                    'id_parent' => (int) $this->input->post('parent') ?? 0,
+                    'kode' => $this->input->post('first') . ($this->input->post('second') ?? ""),
+                    'nama' => $this->input->post('keterangan'),
+                    'uraian' => $this->input->post('uraian') ?? "",
+                    'status' => $this->input->post('status')
+                );
+
+                $actionType = $this->input->post('actionType') ?? "";
+                $message = array(
+                    'success' => '',
+                    'error' => ''
+                );
+                if ($actionType == 'add') {
+                    $message = array(
+                        'success' => 'Data sub klasifikasi berhasil ditambahkan!',
+                        'error' => 'Gagal menambahkan data sub klasifikasi!'
+                    );
+                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+                    if (!$exist) {
+                        $executed = $this->surat->insertDataKlasifikasi($param);
+                    } else {
+                        $message['error'] = 'Kode klasifikasi sudah ada!';
+                    }
+                } else if ($actionType == 'edit') {
+                    $message = array(
+                        'success' => 'Data sub klasifikasi berhasil diperbarui!',
+                        'error' => 'Gagal memperbarui data sub klasifikasi!'
+                    );
+                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+                    if (!$exist) {
+                        $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
+                    } else {
+                        $message['error'] = 'Kode klasifikasi sudah ada!';
+                    }
+                }
+
+                if ($executed) {
+                    echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                }
+                break;
+			default:
+				redirect(404);
+				break;
+		}
+    }
+
     public function referensi($action = null) {
         if (!$this->session->userdata('username')) {
             redirect('v2');
@@ -479,7 +707,7 @@ class V2 extends CI_Controller
         //CHECK IF PASSWORD IS MATCH
         if (password_verify($password, $userLogin->password)) {
             $this->user->updateLastTimeLoginUser($userLogin->id_user);
-            if ('1' == $role) {
+            // if ('1' == $role) {
                 $data = [
                     'id_user' => $userLogin->id_user,
                     'id_instansi' => $userLogin->id_instansi,
@@ -498,7 +726,7 @@ class V2 extends CI_Controller
                 }
                 $this->session->set_userdata($data);
                 redirect('v2');
-            }
+            // }
         } else {
             $this->session->set_flashdata(
                 'message',
@@ -707,7 +935,7 @@ class V2 extends CI_Controller
 
             if ($this->upload->do_upload($fileName)) {
                 $oldFile = './' . $upload_path . '/' . $prevFileName;
-                if ($prevFileName != 'default.png') {
+                if ($prevFileName != 'default-image.png') {
                     unlink($oldFile);
                 }
                 $result = array($date, $new_fileName . $this->upload->data('file_ext'));

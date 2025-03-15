@@ -15,7 +15,7 @@
                                     <img src="<?= BASE_THEME; ?>images/user/<?= $userLogin->img_profile; ?>" alt="user-image" class="user-avtar wid-45 rounded-circle" />
                                 </div>
                                 <div class="flex-grow-1 ms-3 me-2">
-                                    <h6 class="mb-0"><?= $userLogin->nama; ?></h6>
+                                    <h6 class="mb-0"><?= substr($userLogin->nama, 0, 11); ?></h6>
                                     <?php
                                         $position = array('1' => 'Administrator', '2' => 'Pegawai', '3' => 'Petugas Dispo');
                                     ?>
@@ -64,26 +64,28 @@
                             </a>
                             <ul class="pc-submenu">
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="javascript:;" class="pc-link">Transaksi Surat<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Surat Masuk<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
-                                        <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/transaksi/surat-masuk' ?>">Daftar Surat</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="#!">Cetak Laporan</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="#!">File Surat</a></li>
                                     </ul>
                                 </li>
                                 <li class="pc-item pc-hasmenu">
-                                    <a href="javascript:;" class="pc-link">Buku Agenda<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
+                                    <a href="javascript:;" class="pc-link">Surat Keluar<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
-                                        <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="#!">Daftar Surat</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="#!">Cetak Laporan</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="#!">File Surat</a></li>
                                     </ul>
                                 </li>
-                                <li class="pc-item pc-hasmenu">
+                                <!-- <li class="pc-item pc-hasmenu">
                                     <a href="javascript:;" class="pc-link">Galeri File<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Masuk</a></li>
                                         <li class="pc-item"><a class="pc-link" href="#!">Surat Keluar</a></li>
                                     </ul>
-                                </li>
+                                </li> -->
                             </ul>
                         </li>
                         <li class="pc-item">
@@ -94,6 +96,7 @@
                                 <span class="pc-mtext">Referensi</span>
                             </a>
                         </li>
+                        <?php if ($this->session->userdata('role') == 1) : ?>
                         <li class="pc-item pc-hasmenu">
                             <a href="javascript:;" class="pc-link">
                                 <span class="pc-micon"><i class="ti ti-settings"></i></span>
@@ -112,6 +115,7 @@
                                 </li>
                             </ul>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
