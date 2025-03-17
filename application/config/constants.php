@@ -7,6 +7,7 @@ define('SYS_NAME', 'Suratku. | PA Sumbawa Besar');
 define('TBL_INSTANSI', 'tbl_instansi');
 define('TBL_SURAT_MASUK', 'tbl_surat_masuk');
 define('TBL_SURAT_KELUAR', 'tbl_surat_keluar');
+define('TBL_DISPOSISI', 'tbl_disposisi_new');
 define('TBL_KLASIFIKASI', 'tbl_klasifikasi_new');
 define('TBL_USER', 'tbl_user');
 define('SECRET_PIN', '251024');

@@ -21551,6 +21551,31 @@ input[type=number]::-webkit-outer-spin-button {
   color: #6c757d !important;
 }
 
+.bootstrap-datetimepicker-widget {
+  min-width: 300px !important;
+  max-width: none !important;
+  white-space: nowrap;
+}
+
+.bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.today {
+  background: #2ba87e !important;  /* Warna baru */
+  color: #ffffff !important;
+  border-radius: 5px;
+}
+
+.bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.today,
+.bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.today:hover {
+    background: #2ba87e !important;
+    color: #ffffff !important;
+}
+
+.bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.active,
+.bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.active:hover {
+    background: #2ba87e !important;  /* Ganti dengan warna yang diinginkan */
+    color: #ffffff !important;
+    border-radius: 5px;  /* Tambahan efek rounded */
+}
+
 
 
 /**  =====================

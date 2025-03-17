@@ -10,8 +10,10 @@ class M_User extends CI_Model
         date_default_timezone_set('Asia/Bangkok');
     }
 
-    public function getListUsers() {
-        $this->db->order_by("id_user", "ASC");
+    public function getListUsers($option = null, $param = null) {
+        if (!empty($option)) {
+            $this->db->order_by($param['column'], $param['value']);
+        }
         $query = $this->db->get(TBL_USER);
         return $query->result();
     }

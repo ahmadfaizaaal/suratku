@@ -1,8 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-// define('TBL_SURAT_MASUK', 'tbl_surat_masuk');
-// define('TBL_SURAT_KELUAR', 'tbl_surat_keluar');
-// define('TBL_KLASIFIKASI', 'tbl_klasifikasi_new');
 
 class M_Surat extends CI_Model
 {
@@ -10,6 +7,44 @@ class M_Surat extends CI_Model
     {
         parent::__construct();
         date_default_timezone_set('Asia/Bangkok');
+    }
+
+    public function getDataSurat($table, $column, $value)
+    {
+        $this->db->select('*');
+        $this->db->from($table);
+        $this->db->where($column, $value);
+        $sql = $this->db->get();
+        $result = $sql->row();
+        return $result;
+    }
+
+    public function getDataDisposisi($table, $column, $value) 
+    {
+        $query = $this->db->get_where($table, [$column => $value]);
+        $result = $query->result();
+        if (!empty($result) && $result->num_rows() > 0) {
+            return $result->result();
+        } else {
+            return null;
+        }
+    }
+
+    public function getListSuratMasuk() 
+    {
+        //$this->db->where("YEAR(tgl_surat)", 2025); //sementara
+        $this->db->order_by("tgl_surat", "DESC");
+        $this->db->order_by("no_agenda", "DESC");
+        $query = $this->db->get(TBL_SURAT_MASUK);
+        return $query->result();
+    }
+    
+    public function getListSuratKeluar() 
+    {
+        $this->db->order_by("tgl_surat", "DESC");
+        $this->db->order_by("no_agenda", "DESC");
+        $query = $this->db->get(TBL_SURAT_KELUAR);
+        return $query->result();
     }
 
     public function getRekapSuratMasukPerBulan($tahun = null)
