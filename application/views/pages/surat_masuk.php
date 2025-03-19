@@ -157,7 +157,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <input type="hidden" name="id_surat" value="">
+                                <input type="hidden" id="id_surat" name="id_surat" value="">
                                 <input type="hidden" id="actionType" name="actionType" value="">
                                 <div class="form-group row align-items-center">
                                     <label for="nomor_agenda" class="label-control col-md-4">Nomor Agenda<span class="text-danger"> *</span></label>
@@ -280,7 +280,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer align-items-center">
+                        <p class="text-muted me-3 fst-italic fs-6" id="required-info">Tanda <span class="text-danger">*</span>) wajib diisi!</p>
                         <a href="javascript:;" class="btn btn-success align-items-center" id="btnSave">
                             <i class="ti ti-device-floppy"></i> &nbsp;&nbsp;Simpan
                         </a>
@@ -462,6 +463,8 @@
                                 <input type="text" class="form-control catatan-disposisi" name="catatan_disposisi[]" value="" autocomplete="off">
                             </td>
                             <td class="text-center">
+                                <input type="hidden" name="id_disposisi[]" value="">
+                                <input type="hidden" name="id_user_tujuan[]" id="id_user_tujuan" value="${selectedData.id}">
                                 <a href="javascript:;" class="btn btn-icon btn-danger delete-dispo fs-7" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Hapus Disposisi">
                                     <i class="ti ti-trash"></i>
                                 </a>
@@ -499,7 +502,9 @@
                     
                     $('#sifat_surat').val(null).trigger('change');
                     $('#disposisi_ke').val(null).trigger('change');
-                    $('#file_surat_label').append('<span class="text-danger" id="file_attr"> *</span>');
+                    if ($("#file_attr").length == 0) {
+                        $('#file_surat_label').append('<span class="text-danger" id="file_attr"> *</span>');
+                    }
                     $('input[name=actionType]').val('add');
 
                     modal.find('.modal-title').text('TAMBAH DATA SURAT MASUK');
@@ -536,10 +541,10 @@
 
                 //DELETE DATA HANDLER
                 $('#dataSuratTable').on('click', '.delete-data', function() {
-                    var userId = $(this).attr('data');
+                    var idSurat = $(this).attr('data');
 
                     swal({
-                        title: 'Anda yakin ingin menghapus user?',
+                        title: 'Anda yakin ingin menghapus surat ini?',
                         type: 'warning',
                         showCancelButton: true,
                         focusConfirm: false,
@@ -553,7 +558,7 @@
                             $.ajax({
                                 type: 'ajax',
                                 method: 'post',
-                                url: '<?= BASE_URL . 'v2/setting/users/delete/'; ?>' + userId,
+                                url: '<?= BASE_URL . 'v2/transaksi/surat-masuk/delete/'; ?>' + idSurat,
                                 async: false,
                                 dataType: 'json',
                                 success: function(response) {
@@ -573,7 +578,7 @@
                                             confirmButtonColor: '#2ba87e',
                                             confirmButtonText: 'Oke'
                                         }).then(() => {
-                                            window.location.href = '<?= BASE_URL . 'v2/setting/users' ?>'; 
+                                            window.location.href = '<?= BASE_URL . 'v2/transaksi/surat-masuk' ?>'; 
                                         });
                                     }
                                 },
@@ -595,15 +600,24 @@
                 //VIEW PDF FILE HANDLER
                 // $('.view-pdf').click(function () {
                 $(document).on('click', '.view-pdf', function() {
-                    let pdfUrl = $(this).closest('tr').data('file') + "#zoom=page-fit&navpanes=0"; 
-                    PDFObject.embed(pdfUrl, "#pdf-viewer");
-                    modalPdf.modal('show');
-
-                    setTimeout(() => {
-                        let modalHeight = $(window).height() * 0.8; // 80% dari tinggi layar
-                        $('#pdf-viewer').css('height', modalHeight + 'px');
-                        modalPdf.removeAttr('aria-hidden');
-                    }, 300);
+                    let isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    
+                    if (isMobile) {
+                        let pdfFile = $(this).closest('tr').data('file'); 
+                        let pdfUrl = pdfFile.split('/').pop();
+                        // window.open(pdfUrl, '_blank');
+                        window.open('<?= BASE_URL . 'v2/transaksi/surat-masuk/preview' ?>' + '?file=' + pdfUrl, '_blank');
+                    } else {
+                        let pdfUrl = $(this).closest('tr').data('file') + "#zoom=page-fit&navpanes=0";
+                        PDFObject.embed(pdfUrl, "#pdf-viewer");
+                        modalPdf.modal('show');
+    
+                        setTimeout(() => {
+                            let modalHeight = $(window).height() * 0.8; // 80% dari tinggi layar
+                            $('#pdf-viewer').css('height', modalHeight + 'px');
+                            modalPdf.removeAttr('aria-hidden');
+                        }, 300);
+                    }
                 });
                 //END OF VIEW PDF FILE HANDLER
 
@@ -713,8 +727,10 @@
 
                                 // Ambil data disposisi yang masih aktif (tidak tersembunyi)
                                 $("#dataDisposisi").find("tr:not(.deleted)").each(function () {
+                                    let idDisposisi = $(this).find('input[name="id_disposisi[]"]').val();
                                     let dari = $(this).find("td:nth-child(2)").text().trim(); // Kolom 'Dari'
                                     let tujuan = $(this).find("td:nth-child(3)").text().trim(); // Kolom 'Tujuan Disposisi'
+                                    let idUserTujuan = $(this).find('input[name="id_user_tujuan[]"]').val();
                                     let tanggalDisposisi = $(this).find("td:nth-child(4)").text().trim(); // Kolom 'Tanggal Disposisi'
                                     let catatan = $(this).find(".catatan-disposisi").val(); // Input catatan
 
@@ -723,10 +739,12 @@
 
                                     // Push data ke array
                                     disposisiData.push({
+                                        id_disposisi: idDisposisi,
                                         disposed_by: dari,
                                         disposed_to: tujuan,
                                         tgl_disposisi: formattedDate,
-                                        catatan: catatan
+                                        catatan: catatan,
+                                        id_user_tujuan: idUserTujuan
                                     });
                                 });
 
@@ -750,7 +768,9 @@
                                 formData.append("disposisi", JSON.stringify(disposisiData));
                                 formData.append("deleted_disposisi", JSON.stringify(deletedDispositions));
 
-                                console.log(formData)
+                                // console.log('<br> disposisiData ==> ' + disposisiData)
+                                // console.log('<br> deletedDispositions ==> ' + deletedDispositions) 
+                                // console.log('<br> formData ==> ' + formData) 
 
                                 $.ajax({
                                     type: 'ajax',
@@ -822,25 +842,29 @@
                             tbodyDisposition.empty();
 
                             // Tambahkan daftar disposisi eksisting
-                            response.disposisi.forEach((item, index) => {
-                                let row = `
-                                    <tr>
-                                        <td class="text-center seq-no">${index + 1}</td>
-                                        <td class="text-center">${item.disposed_by}</td>
-                                        <td class="text-center">${item.disposed_to}</td>
-                                        <td class="text-center">${moment(item.tgl_disposisi).format("DD MMMM YYYY")}</td>
-                                        <td>
-                                            <input type="text" class="form-control catatan-disposisi" name="catatan_disposisi[]" value="${item.catatan}" autocomplete="off">
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="javascript:;" data-id="${item.id_disposisi}" class="btn btn-icon btn-danger delete-dispo fs-7" data-bs-toggle="tooltip" title="Hapus Disposisi">
-                                                <i class="ti ti-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                `;
-                                tbodyDisposition.append(row);
-                            });
+                            if (response.disposisi != null) {
+                                response.disposisi.forEach((item, index) => {
+                                    let row = `
+                                        <tr>
+                                            <td class="text-center seq-no">${index + 1}</td>
+                                            <td class="text-center">${item.disposed_by}</td>
+                                            <td class="text-center">${item.disposed_to}</td>
+                                            <td class="text-center">${moment(item.tgl_disposisi).format("DD MMMM YYYY")}</td>
+                                            <td>
+                                                <input type="text" class="form-control catatan-disposisi" name="catatan_disposisi[]" value="${item.catatan}" autocomplete="off">
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="hidden" name="id_disposisi[]" value="${item.id_disposisi}">
+                                                <input type="hidden" name="id_user_tujuan[]" id="id_user_tujuan" value="${item.user_destination}">
+                                                <a href="javascript:;" data-id="${item.id_disposisi}" class="btn btn-icon btn-danger delete-dispo fs-7" data-bs-toggle="tooltip" title="Hapus Disposisi">
+                                                    <i class="ti ti-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    `;
+                                    tbodyDisposition.append(row);
+                                });
+                            }
 
                             updateSequenceNumbers();
                             

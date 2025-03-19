@@ -176,11 +176,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <a href="javascript:;" class="btn btn-success align-items-center" id="btnSave">
+                    <div class="modal-footer align-items-center">
+                        <p class="text-muted me-3 fst-italic fs-6" id="required-info">Tanda <span class="text-danger">*</span>) wajib diisi!</p>
+                        <a href="javascript:;" class="btn btn-success align-items-center d-inline-flex" id="btnSave">
                             <i class="ti ti-device-floppy"></i> &nbsp;&nbsp;Simpan
                         </a>
-                        <a href="javascript:;" class="btn btn-secondary align-items-center" data-dismiss="modal" id="btnCancel">
+                        <a href="javascript:;" class="btn btn-secondary align-items-center d-inline-flex" data-dismiss="modal" id="btnCancel">
                             <i class="ti ti-x"></i> &nbsp;&nbsp;Tutup
                         </a>
                     </div>

@@ -204,7 +204,7 @@ class V2 extends CI_Controller
                             'asal_surat'   => $this->input->post('asal_surat', true),
                             'isi'          => $this->input->post('hal_surat', true),
                             'kode'         => $this->input->post('kode_surat', true),
-                            'lampiran'     => $this->input->post('lampiran', true) ?? '-',
+                            'lampiran'     => $this->input->post('lampiran_surat', true) ?? '-',
                             'tgl_surat'    => $this->input->post('tgl_surat', true),
                             'tgl_diterima' => $this->input->post('tgl_diterima', true),
                             'file'         => $this->input->post('prev_file_surat', true),
@@ -216,7 +216,10 @@ class V2 extends CI_Controller
                         $deleted_disposisi = json_decode($this->input->post('deleted_disposisi'), true);
                         
                         // Debug: Cek apakah data masuk dengan benar
+                        // echo "<pre>" . $idSurat; echo "</pre><br>";
+                        // echo "<pre>" . $actionType; echo "</pre><br>";
                         // echo "<pre>"; print_r($disposisi_data); echo "</pre><br>";
+                        // echo "<pre>"; print_r($deleted_disposisi); echo "</pre><br>";
                         // echo "<pre>"; print_r($param); echo "</pre>";
                         // die;
 
@@ -228,7 +231,7 @@ class V2 extends CI_Controller
                         $message = array('success' => '', 'error' => '');
                         if ($actionType == 'add') {
                             $message = array(
-                                'success' => 'Surat Masuk berhasil ditambahkan!',
+                                'success' => 'Surat masuk berhasil ditambahkan!',
                                 'error' => 'Gagal menambahkan data surat masuk'
                             );
                             $exist = $this->surat->checkIsExistSurat(TBL_SURAT_MASUK, $param['no_surat']);
@@ -240,30 +243,31 @@ class V2 extends CI_Controller
                             }
                         } else if ($actionType == 'edit') {
                             $message = array(
-                                'success' => 'Data sub klasifikasi berhasil diperbarui!',
-                                'error' => 'Gagal memperbarui data sub klasifikasi!'
+                                'success' => 'Data surat masuk berhasil diperbarui!',
+                                'error' => 'Gagal memperbarui data surat masuk!'
                             );
-                            $exist = $this->surat->checkIsExistKlasifikasi(TBL_SURAT_MASUK, $param['kode']);
-                            if (!$exist) {
-                                $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
-                            } else {
-                                $message['error'] = 'Kode klasifikasi sudah ada!';
-                            }
+                            $executed = $this->surat->updateDataSurat(TBL_SURAT_MASUK, array('column' => 'id_surat', 'value' => $idSurat), $param);
                         }
         
                         if ($executed) {
                             if (!empty($disposisi_data)) {
                                 foreach ($disposisi_data as $row) {
                                     $dataDisposisi = [
-                                        'id_surat'   => $idSurat,
-                                        'disposed_by'   => $row['disposed_by'],
-                                        'disposed_to'   => $row['disposed_to'],
-                                        'tgl_disposisi' => $row['tgl_disposisi'],
-                                        'catatan'       => $row['catatan'],
-                                        'status'        => '1',
-                                        'created_by'    => $this->session->userdata('id_user')
+                                        'id_surat'         => $idSurat,
+                                        'disposed_by'      => $row['disposed_by'],
+                                        'disposed_to'      => $row['disposed_to'],
+                                        'tgl_disposisi'    => $row['tgl_disposisi'],
+                                        'catatan'          => $row['catatan'],
+                                        'status'           => '1',
+                                        'user_destination' => $row['id_user_tujuan'],
+                                        'created_by'       => $this->session->userdata('id_user')
                                     ];
-                                    $this->surat->insertDataDisposisi($dataDisposisi);
+                                    if (!empty($row['id_disposisi'])) {
+                                        $this->surat->updateDataDisposisi(array('column' => 'id_disposisi', 'value' => $row['id_disposisi']), $dataDisposisi);
+                                    } else {
+                                        $this->surat->insertDataDisposisi($dataDisposisi);
+                                    }
+                                    // $this->surat->insertDataDisposisi($dataDisposisi);
                                 }
                             }
                         
@@ -278,6 +282,44 @@ class V2 extends CI_Controller
                         } else {
                             echo json_encode(['status' => 'error', 'message' => $message['error']]);
                         }
+                        break;
+                    case "delete":
+                        $idSurat = $this->uri->segment(5);
+                        if (!empty($idSurat)) {
+                            $thisSurat = $this->surat->getDataSurat(TBL_SURAT_MASUK, 'id_surat', $idSurat);
+                            if ($thisSurat) {
+                                $filePath = './assets/uploads/docs/' . $action . '/' . $thisSurat->file;
+
+                                $hasDisposition = $this->surat->getDataDisposisi(TBL_DISPOSISI, 'id_surat', $idSurat);
+                                if (!empty($hasDisposition)) {
+                                    foreach ($hasDisposition as $item) {
+                                        $this->surat->deleteDataDisposisi($item->id_disposisi);
+                                    }
+                                }
+    
+                                $deleted = $this->surat->deleteDataSurat(TBL_SURAT_MASUK, $idSurat);
+
+                                if ($deleted) {
+                                    if (!empty($thisSurat->file) && file_exists($filePath)) {
+                                        unlink($filePath);
+                                    }
+                                    echo json_encode(['status' => 'success', 'message' => 'Data surat masuk berhasil dihapus!']);
+                                } else {
+                                    echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data surat masuk.']);
+                                }
+                            }
+                        }
+                        break;
+                    case "preview":
+                        $fileName = $this->input->get('file');
+                        $filePath = './assets/uploads/docs/' . $action . '/' . $fileName;
+                        if (!file_exists($filePath)) {
+                            show_404();
+                            return;
+                        }
+                        $data['title'] = SYS_NAME;
+                        $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName));
+                        $this->load->view("pages/pdf_viewer", $data);
                         break;
                     default:
                         redirect(404);
@@ -979,6 +1021,36 @@ class V2 extends CI_Controller
     private function executeRestore()
     {
 
+    }
+
+    // public function preview_file()
+    // {
+    //     $action = $this->input->get('action');
+    //     $fileName = $this->input->get('file');
+    //     $filePath = './assets/uploads/docs/' . $action . '/' . $fileName;
+    //     if (!file_exists($filePath)) {
+    //         show_404();
+    //         return;
+    //     }
+    //     $data['title'] = SYS_NAME;
+    //     $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName));
+    //     $this->load->view("pages/pdf_viewer", $data);
+    // }
+
+    public function get_file($action)
+    {
+        $fileName = $this->input->get('file');
+        $filePath = FCPATH . "assets/uploads/docs/$action/" . $fileName;
+
+        if (!file_exists($filePath)) {
+            show_404();
+            return;
+        }
+
+        // Set header untuk menampilkan PDF di browser
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $fileName . '"');
+        readfile($filePath);
     }
 
     public function logout()

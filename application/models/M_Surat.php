@@ -305,11 +305,44 @@ class M_Surat extends CI_Model
         }
     }
 
+    public function updateDataSurat($table, $primaryKey, $data)
+    {
+        $this->db->where($primaryKey['column'], $primaryKey['value']);
+        $this->db->update($table, $data);
+        if ($this->db->affected_rows() > 0 || $this->db->error()['code'] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function updateDataDisposisi($primaryKey, $data)
+    {
+        $this->db->where($primaryKey['column'], $primaryKey['value']);
+        $this->db->update(TBL_DISPOSISI, $data);
+        if ($this->db->affected_rows() > 0 || $this->db->error()['code'] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function updateDataKlasifikasi($primaryKey, $data)
     {
         $this->db->where($primaryKey['column'], $primaryKey['value']);
         $this->db->update(TBL_KLASIFIKASI, $data);
         if ($this->db->affected_rows() > 0 || $this->db->error()['code'] == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteDataSurat($table, $idSurat)
+    {
+        $this->db->where('id_surat', $idSurat);
+        $this->db->delete($table);
+        if ($this->db->affected_rows() > 0) {
             return true;
         } else {
             return false;
