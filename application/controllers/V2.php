@@ -318,6 +318,8 @@ class V2 extends CI_Controller
                             return;
                         }
                         $data['title'] = SYS_NAME;
+                        $data['action'] = $action;
+                        $data['fileName'] = $fileName;
                         $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0';
                         $this->load->view("pages/pdf_viewer", $data);
                         break;
@@ -1039,6 +1041,10 @@ class V2 extends CI_Controller
 
     public function get_file($action)
     {
+        if (!$this->session->userdata('username')) {
+            redirect('v2');
+        }
+        
         $fileName = $this->input->get('file');
         $filePath = FCPATH . "assets/uploads/docs/$action/" . $fileName;
 
