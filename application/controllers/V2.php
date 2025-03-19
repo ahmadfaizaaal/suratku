@@ -318,7 +318,7 @@ class V2 extends CI_Controller
                             return;
                         }
                         $data['title'] = SYS_NAME;
-                        $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName));
+                        $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0';
                         $this->load->view("pages/pdf_viewer", $data);
                         break;
                     default:
