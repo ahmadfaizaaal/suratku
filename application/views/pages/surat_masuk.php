@@ -55,14 +55,19 @@
                             <div class="card-header">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="mb-0 fs-5 fw-bold text-success" id="rekapTitle">DAFTAR SURAT MASUK</h6>
-                                    <a href="javascript:;" data="" class="btn btn-sm btn-success fs-7 align-items-center justify-content-center" id="btnAdd">
+                                    <div class="m-0 w-25" >
+                                        <select role="presentation" id="tahun_surat" class="select2 form-control form-select rounded" name="tahun_surat" style="max-width: 200px; width: 100%;">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                    <a href="javascript:;" data="" class="btn d-inline-flex btn-success fs-6 align-items-center justify-content-center" id="btnAdd">
                                         <i class="ti ti-plus me-1"></i> Tambah Data
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body mb-5">
                                 <!-- PUT SOME CODE HERE -->
-                                <table class="table table-bordered adjust-table" width="100%" id="list-data-user">
+                                <table class="table table-bordered adjust-table" width="100%" id="list-data-surat">
                                     <thead>
                                         <tr>
                                             <th class="text-center text-middle" width="12%">
@@ -126,7 +131,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="modalBody">
-                        <div id="pdf-viewer" style="height: 100%; width: 100%;"></div>
+                        <div id="pdf-viewer"></div>
                         <!-- <iframe id="pdf-viewer" src="" width="100%" height="600px" style="border: none;"></iframe> -->
                     </div>
                     <div class="modal-footer">
@@ -140,10 +145,10 @@
         <!-- END OF MODAL PDF -->
 
 
-        <!-- MODAL USER DETAIL -->
+        <!-- MODAL SURAT DETAIL -->
         <div class="modal fade" id="modalSuratDetail" tabindex="-1" role="dialog" aria-labelledby="modalSuratDetailLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl " role="document">
-                <?= form_open_multipart('v2/setting/users/save-changes', 'id="form-edit-user"'); ?>
+                <?= form_open_multipart('v2/transaksi/surat-masuk/save-changes', 'id="form-edit-surat"'); ?>
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title fw-bold text-success" id="modalSuratDetailLabel">INFORMASI SURAT</h5>
@@ -152,85 +157,85 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-6">
-                                <input type="hidden" name="id_user" value="0">
+                                <input type="hidden" name="id_surat" value="">
                                 <input type="hidden" id="actionType" name="actionType" value="">
                                 <div class="form-group row align-items-center">
-                                    <label for="nomor-agenda" class="label-control col-md-3">Nomor Agenda</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="nomor-agenda" name="nomor-agenda" value="" autocomplete="off">
+                                    <label for="nomor_agenda" class="label-control col-md-4">Nomor Agenda<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="nomor_agenda" name="nomor_agenda" value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="nomor-surat" class="label-control col-md-3">Nomor Surat</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="nomor-surat" name="nomor-surat" value="" autocomplete="off">
+                                    <label for="nomor_surat" class="label-control col-md-4">Nomor Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="nomor_surat" name="nomor_surat" value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="lampiran-surat" class="label-control col-md-3">Lampiran</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="lampiran-surat" name="lampiran-surat" value="" autocomplete="off">
+                                    <label for="lampiran_surat" class="label-control col-md-4">Lampiran</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="lampiran_surat" name="lampiran_surat" value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="kode-surat" class="label-control col-md-3" id="parent_label">Kode Surat</label>
-                                    <div class="col-md-9">
-                                        <input type="hidden" name="kode_surat" id="kode_surat" value="">
-                                        <select role="presentation" id="kode-surat" class="select2 form-control form-select rounded" name="kode-surat">
+                                    <label for="kode_surat" class="label-control col-md-4" id="parent_label">Kode Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="hidden" name="kode_surat_hidden" id="kode_surat_hidden" value="">
+                                        <select role="presentation" id="kode_surat" class="select2 form-control form-select rounded" name="kode_surat">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center mb-4">
-                                    <label for="sifat-surat" class="label-control col-md-3">Sifat Surat</label>
-                                    <div class="col-md-9">
-                                        <input type="hidden" name="sifat_surat" id="sifat_surat" value="">
-                                        <select role="presentation" id="sifat-surat" class="select2 form-control form-select rounded" name="sifat-surat">
+                                    <label for="sifat_surat" class="label-control col-md-4">Sifat Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="hidden" name="sifat_surat_hidden" id="sifat_surat_hidden" value="">
+                                        <select role="presentation" id="sifat_surat" class="select2 form-control form-select rounded" name="sifat_surat">
                                             <option></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="asal-surat" class="label-control col-md-3">Asal Surat</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="asal-surat" name="asal-surat" value="" autocomplete="off">
+                                    <label for="asal_surat" class="label-control col-md-4">Asal Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="asal_surat" name="asal_surat" value="" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group row align-items-center">
-                                    <label for="hal-surat" class="label-control col-md-3">Hal Surat</label>
-                                    <div class="col-md-9">
-                                        <textarea class="form-control" id="hal-surat" name="hal-surat" value="" rows="4"></textarea>
+                                    <label for="hal_surat" class="label-control col-md-4">Hal Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control" id="hal_surat" name="hal_surat" value="" rows="4"></textarea>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="tanggal-surat" class="label-control col-md-3">Tanggal Surat</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="tanggal-surat" name="tanggal-surat" value="" autocomplete="off">
+                                    <label for="tanggal_surat" class="label-control col-md-4">Tanggal Surat<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="tanggal_surat" name="tanggal_surat" value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="tanggal-diterima" class="label-control col-md-3">Tanggal Diterima</label>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" id="tanggal-diterima" name="tanggal-diterima" value="" autocomplete="off">
+                                    <label for="tanggal_diterima" class="label-control col-md-4">Tanggal Diterima<span class="text-danger"> *</span></label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="tanggal_diterima" name="tanggal_diterima" value="" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label class="col-md-3 label-control" for="file-surat">File Surat</label>
-                                    <div class="col-md-9">
+                                    <label class="col-md-4 label-control" for="file_surat" id="file_surat_label">File Surat</label>
+                                    <div class="col-md-8">
                                         <div class="dropzone text-start">
-                                            <input type="hidden" id="prev-file-surat" name="prev-file-surat" value="">
-                                            <input type="file" class="dropzone-upload" name="file-surat" id="file-surat" accept="application/pdf">
+                                            <input type="hidden" id="prev_file_surat" name="prev_file_surat" value="">
+                                            <input type="file" class="dropzone-upload" name="file_surat" id="file_surat" accept="application/pdf">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
-                                    <label for="disposisi-ke" class="label-control col-md-3" id="disposisi-label">Disposisi ke-</label>
-                                    <div class="col-md-9">
+                                    <label for="disposisi_ke" class="label-control col-md-4" id="disposisi-label">Disposisi ke-</label>
+                                    <div class="col-md-8">
                                         <div class="d-flex w-100 align-items-center">
                                             <input type="hidden" name="disposisi" id="disposisi" value="">
-                                            <select role="presentation" id="disposisi-ke" class="select2 form-control form-select rounded me-3" name="disposisi-ke">
+                                            <select role="presentation" id="disposisi_ke" class="select2 form-control form-select rounded me-3" name="disposisi_ke">
                                                 <option></option>
                                             </select>
                                             <a href="javascript:;" data="" class="btn btn-lg btn-icon btn-success fs-7 align-items-center rounded ms-3" id="btnAddDisposition" title="Tambah Disposisi">
@@ -294,25 +299,39 @@
                 const base_url = '<?= BASE_URL ?>';
                 const modal = $('#modalSuratDetail');
                 const modalPdf = $('#modalPdfFile');
+                const thisYear = new Date().getFullYear();
                 let kodeKlasifikasi = []
                 let dataPegawai = []
+                let listTahun = []
 
-                loadData()
+                loadData('2025')
+                populateListYear()
                 populateListKode()
                 populateListPegawai()
 
                 var tableInstance;
 
                 function drawDataTables(id = '', keep = false, reinitialize = false, page = false) {
+                    if ($.fn.DataTable.isDataTable(id)) {
+                        $(id).DataTable().clear().destroy(); // Hancurkan DataTable yang sudah ada
+                        $(id + " tbody").empty(); // Kosongkan hanya isi tbody, jangan hapus tabel
+                    }
                     tableInstance = $(document).find(id).DataTable({
                         scrollX: true,
-                        // order: [
-                        //     [6, "desc"]
-                        // ],
-                        ordering: false,
+                        order: [
+                            [5, "desc"],
+                            [1, "desc"]
+                        ],
+                        ordering: true,
+                        "columnDefs": [
+                            { "type": "num", "targets": 1 },  // Kolom ke-1 dianggap sebagai angka
+                            { "type": "date", "targets": 5 }  // Kolom ke-5 dianggap sebagai tanggal
+                        ],
                         pageLength: 50,
                         paging: true, // Pastikan pagination aktif
                         lengthMenu: [5, 10, 25, 50, 100], // Pilihan jumlah data per halaman
+                        //deferRender: true, // Render hanya saat data muncul di layar
+                        //processing: true,
                         language: {
                             paginate: {
                                 previous: "<i class='ti ti-chevron-left'></i>",
@@ -349,36 +368,77 @@
                 }
 
                 const initialLoad = (tablePage = false) => {
-                    tableInstance = drawDataTables('#list-data-user', false, false, tablePage)
+                    tableInstance = drawDataTables('#list-data-surat', false, false, tablePage)
                 }
 
                 initialLoad()
 
+                listTahun.unshift({ id: 'all', text: 'Semua Tahun' });
+                $('#tahun_surat').empty().select2({
+                    theme: 'bootstrap-5',
+                    width: '100%',
+                    placeholder: 'Pilih Tahun Surat Masuk',
+                    allowClear: true,
+                    data: listTahun,
+                    language: {
+                        noResults: function(params) {
+                            return "Tahun tidak ditemukan!";
+                        },
+                        searching: function(params) {
+                            return "Mencari...";
+                        },
+                        inputTooShort: function(params) {
+                            var x = params.minimum - params.input.length;
+                            return "Masukkan " + x + " karakter lagi";
+                        }
+                    },
+                });
+                $('#tahun_surat').val(null).trigger('change');
+                $('#tahun_surat').on('change', function() {
+                    let tahun = $('#tahun_surat').select2('data');
+                    loadData(tahun[0].id)
+                });
+
                 //DATETIME PICKER
-                $('#tanggal-surat, #tanggal-diterima').datetimepicker({
+                $('#tanggal_surat, #tanggal_diterima').datetimepicker({
                     locale: 'id',
                     format: 'DD MMMM YYYY',
                     maxDate: moment().add(0, 'days'),
                     debug: true
                 });
 
-                $('#tanggal-surat, #tanggal-diterima').on('blur', function () {
+                $('#tanggal_surat, #tanggal_diterima').on('blur', function () {
                     $(this).datetimepicker('hide');
                 });
                 //END OF DATETIME PICKER
 
+                //CLOSE MODAL HANDLER
+                modal.on('hidden.bs.modal', function() {
+                    const action = $('#actionType').val()
+                    if (!$('#form-edit-surat').data('submitted')) {
+                        if (action && action === 'edit') {
+                            this.querySelectorAll("input[type='text'], input[type='hidden'], textarea").forEach(input => {
+                                input.value = "";
+                            });
+                            $("#dataDisposisi").empty();
+                        }
+                    }
+                    $('#form-edit-surat').removeData('submitted');
+                });
+                //END OF CLOSE MODAL HANDLER
+
                 //ADD DISPOSITION HANDLER
-                $('#btnAddDisposition').attr('disabled');
+                $('#btnAddDisposition').addClass('disabled');
                 
-                $('#disposisi-ke').on('change', function(e) {
+                $('#disposisi_ke').on('change', function(e) {
                     e.preventDefault();
-                    !$('#disposisi-ke').val() ? $('#btnAddDisposition').addClass('disabled') : $('#btnAddDisposition').removeClass('disabled');
+                    !$('#disposisi_ke').val() ? $('#btnAddDisposition').addClass('disabled') : $('#btnAddDisposition').removeClass('disabled');
                 });
                 
                 const tbodyDisposition = $("#dataDisposisi");
                 $('#btnAddDisposition').click(function(e) {
                     let today = moment();
-                    let selectedData = $('#disposisi-ke').select2('data')[0];
+                    let selectedData = $('#disposisi_ke').select2('data')[0];
                     let tujuanDisposisi = selectedData.text;
                     let isExist = false;
                     tbodyDisposition.find('tr').each(function() {
@@ -391,6 +451,7 @@
                     if (isExist) {
                         return;
                     }
+                    
                     let row = `
                         <tr>
                             <td class="text-center seq-no"></td>
@@ -409,7 +470,7 @@
                     `;
                     tbodyDisposition.append(row);
                     updateSequenceNumbers();
-                    $('#disposisi-ke').val(null).trigger('change');
+                    $('#disposisi_ke').val(null).trigger('change');
                 });
                 
                 tbodyDisposition.on('click', '.delete-dispo', function() {
@@ -432,87 +493,19 @@
                 $('#btnAdd').click(function(e) {
                     e.preventDefault();
 
-                    // populateListKode();
-                    // populateListPegawai();
                     initialLoadSelectElement();
+                    validateNumber();
+                    validateNomorSurat();
                     
-                    validateNIP();
-                    // $('#kode-surat').empty().select2({
-                    //     theme: 'bootstrap-5',
-                    //     width: '100%',
-                    //     placeholder: 'Tampilkan Data Kode',
-                    //     allowClear: true,
-                    //     dropdownParent: modal,
-                    //     data: kodeKlasifikasi,
-                    //     language: {
-                    //         noResults: function(params) {
-                    //             return "Kode tidak ditemukan!";
-                    //         },
-                    //         searching: function(params) {
-                    //             return "Mencari...";
-                    //         },
-                    //         inputTooShort: function(params) {
-                    //             var x = params.minimum - params.input.length;
-                    //             return "Masukkan " + x + " karakter lagi";
-                    //         }
-                    //     },
-                    // });
-
-                    // $('#sifat-surat').empty().select2({
-                    //     theme: 'bootstrap-5',
-                    //     width: '100%',
-                    //     placeholder: 'Tampilkan Data Sifat',
-                    //     allowClear: true,
-                    //     dropdownParent: modal,
-                    //     data: [
-                    //         { id: "Biasa", text: "Biasa" },
-                    //         { id: "Segera", text: "Segera" },
-                    //         { id: "Penting", text: "Penting" },
-                    //         { id: "Rahasia", text: "Rahasia" }
-                    //     ],
-                    //     language: {
-                    //         noResults: function(params) {
-                    //             return "Sifat surat tidak ditemukan!";
-                    //         },
-                    //         searching: function(params) {
-                    //             return "Mencari...";
-                    //         },
-                    //         inputTooShort: function(params) {
-                    //             var x = params.minimum - params.input.length;
-                    //             return "Masukkan " + x + " karakter lagi";
-                    //         }
-                    //     },
-                    // });
-
-                    // $('#disposisi-ke').empty().select2({
-                    //     theme: 'bootstrap-5',
-                    //     width: '100%',
-                    //     placeholder: 'Tampilkan Data Pegawai',
-                    //     allowClear: true,
-                    //     dropdownParent: modal,
-                    //     data: dataPegawai,
-                    //     language: {
-                    //         noResults: function(params) {
-                    //             return "Pegawai tidak ditemukan!";
-                    //         },
-                    //         searching: function(params) {
-                    //             return "Mencari...";
-                    //         },
-                    //         inputTooShort: function(params) {
-                    //             var x = params.minimum - params.input.length;
-                    //             return "Masukkan " + x + " karakter lagi";
-                    //         }
-                    //     },
-                    // });
-                    
-                    $('#sifat-surat').val(null).trigger('change');
-                    $('#disposisi-ke').val(null).trigger('change');
+                    $('#sifat_surat').val(null).trigger('change');
+                    $('#disposisi_ke').val(null).trigger('change');
+                    $('#file_surat_label').append('<span class="text-danger" id="file_attr"> *</span>');
                     $('input[name=actionType]').val('add');
 
                     modal.find('.modal-title').text('TAMBAH DATA SURAT MASUK');
                     modal.modal('show');
                     modal.on('shown.bs.modal', function () {
-                        $('#nomor-agenda').focus();
+                        $('#nomor_agenda').focus();
                     });
                 });
                 //END OF ADD DATA HANDLER
@@ -520,12 +513,16 @@
                 //EDIT DATA HANDLER
                 $('#dataSuratTable').on('click', '.view-detail', function() {
                     var suratId = $(this).attr('data');
-
+                    
+                    initialLoadSelectElement();
+                    validateNumber();
+                    validateNomorSurat();
+                    loadEditData(suratId);
+                    
+                    $('#file_attr').remove();
+                    $('input[name=actionType]').val('edit'); 
                     modal.find('.modal-title').text('UBAH DATA SURAT MASUK');
                     modal.modal('show');
-                    validateNIP();
-
-                    loadEditData(suratId);
 
                     setTimeout(() => {
                         modal.removeAttr('aria-hidden');
@@ -596,32 +593,34 @@
                 //END OF DELETE DATA HANDLER
 
                 //VIEW PDF FILE HANDLER
-                $('.view-pdf').click(function () {
-                    let pdfUrl = $(this).closest('tr').data('file'); 
-                    console.log(pdfUrl)
+                // $('.view-pdf').click(function () {
+                $(document).on('click', '.view-pdf', function() {
+                    let pdfUrl = $('.view-pdf').closest('tr').data('file') + "#zoom=page-fit&navpanes=0"; 
                     PDFObject.embed(pdfUrl, "#pdf-viewer");
                     modalPdf.modal('show');
 
                     setTimeout(() => {
+                        let modalHeight = $(window).height() * 0.8; // 80% dari tinggi layar
+                        $('#pdf-viewer').css('height', modalHeight + 'px');
                         modalPdf.removeAttr('aria-hidden');
                     }, 300);
                 });
                 //END OF VIEW PDF FILE HANDLER
 
-                $("#status").change(function () {
-                    let statusValue = $(this).is(":checked") ? 1 : 0;
-                    $('input[name=status_choosen]').val(statusValue);
-                    $('#statusLabel').text(statusValue == 1 ? "Aktif" : "Non Aktif");
-                });
-
-                function loadData() {
+                function loadData(tahun = null) {
                     $.ajax({
                         type: 'ajax',
                         method: 'post',
-                        url: '<?= BASE_URL . 'v2/transaksi/surat-masuk/list'; ?>',
-                        async: false,
+                        url: '<?= BASE_URL . 'v2/transaksi/surat-masuk/list/'; ?>' + tahun,
+                        async: true,
                         dataType: 'json',
                         success: function(response) {
+                            // console.log(response.surat)
+                            if ($.fn.DataTable.isDataTable("#list-data-surat")) {
+                                $("#list-data-surat").DataTable().clear().destroy();
+                                $("#list-data-surat tbody").empty(); // Kosongkan isi tabel
+                            }
+
                             const tbody = $("#dataSuratTable"); // Target tbody
                             tbody.empty(); // Kosongkan tbody sebelum memasukkan data baru
 
@@ -639,7 +638,7 @@
                                                 <i class="ti ti-trash"></i> Hapus
                                             </a>
                                         </td>
-                                        <td class="text-center py-0">
+                                        <td class="text-center py-0" data-order="${surat.no_agenda}">
                                             <p class="m-0">${surat.no_agenda}</p>
                                             <hr class="border-secondary border-opacity-50 my-1" />
                                             <span class="badge bg-light-dark fw-bold">${surat.kode}</span>
@@ -649,7 +648,7 @@
                                         <td class="text-center">
                                             <span class="badge text-bg-${ btnColor[surat.sifat] ?? 'secondary' } fs-7">${surat.sifat ?? 'Data Kosong'}</span>
                                         </td>
-                                        <td class="py-0">
+                                        <td class="py-0" data-order="${surat.tgl_diterima}">
                                             <p class="m-0 fw-bold">${surat.no_surat}</p>
                                             <hr class="border-secondary border-opacity-50 my-1" />
                                             ${formatTanggal}
@@ -663,6 +662,8 @@
                                 `;
                                 tbody.append(row);
                             });
+
+                            drawDataTables("#list-data-surat", false, false, false);
                         },
                         error: function() {
                             swal("Error!", "Could not get Data from Database!", "error");
@@ -672,79 +673,130 @@
 
                 $('#btnSave').click(function(e) {
                     e.preventDefault();
-                    let statusValue = $("#status").is(":checked") ? 1 : 0;
-                    $('input[name=status_choosen]').val(statusValue);
-                    let nama = checkIsFilled('nama', 'Nama Lengkap tidak boleh kosong!');
-                    let username = checkIsFilled('username', 'Nama Pengguna tidak boleh kosong!');
-                    let nip = checkIsFilled('nip', 'NIP tidak boleh kosong!');
-                    let jabatan = checkIsFilled('jabatan', 'Jabatan tidak boleh kosong!');
-                    let role = checkIsFilled('role', 'Tipe Pengguna tidak boleh kosong!');
-                    if (nama && username && nip && jabatan && role) {
-                        if (validateEmail()) {
-                            modal.modal('hide');
-                            swal({
-                                title: 'Anda yakin ingin menyimpan perubahan?',
-                                type: 'warning',
-                                showCancelButton: true,
-                                focusConfirm: false,
-                                confirmButtonColor: '#2ba87e',
-                                cancelButtonColor: '#dc2625',
-                                confirmButtonText: 'Ya',
-                                cancelButtonText: 'Tidak',
-                                customClass: 'swal2-custom'
-                            }).then(result => {
-                                if (result.value) {
-                                    let formData = new FormData($("#form-edit-user")[0]);
-                                    $.ajax({
-                                        type: 'ajax',
-                                        url: $("#form-edit-user").attr('action'),
-                                        method: $("#form-edit-user").attr('method'), 
-                                        data: formData,
-                                        contentType: false, // Harus false agar FormData bisa mengirim file
-                                        processData: false, // Harus false agar FormData tidak diproses sebagai string
-                                        dataType: 'json',
-                                        success: function(response) {
-                                            if (response.status === "error") {
-                                                swal({
-                                                        title: 'Error!',
-                                                        text: response.message,
-                                                        type: 'error',
-                                                        confirmButtonColor: '#dc2625',
-                                                        confirmButtonText: 'Oke'
-                                                    });
-                                            } else if (response.status === "success") {
-                                                swal({
-                                                    title: 'Berhasil!',
-                                                    text: response.message,
-                                                    type: 'success',
-                                                    confirmButtonColor: '#2ba87e',
-                                                    confirmButtonText: 'Oke'
-                                                }).then(() => {
-                                                    window.location.href = '<?= BASE_URL . 'v2/setting/users' ?>'; 
-                                                });
-                                            }
-                                        },
-                                        error: function() {
+
+                    const action = $('#actionType').val()
+                    
+                    let nomorAgenda = checkIsFilled('nomor_agenda', 'Nomor Agenda tidak boleh kosong!');
+                    let nomorSurat = checkIsFilled('nomor_surat', 'Nomor Surat tidak boleh kosong!');
+                    let kodeSurat = checkIsFilled('kode_surat', 'Kode Surat tidak boleh kosong!');
+                    let sifatSurat = checkIsFilled('sifat_surat', 'Sifat Surat tidak boleh kosong!');
+                    let asalSurat = checkIsFilled('asal_surat', 'Asal Surat tidak boleh kosong!');
+                    let halSurat = checkIsFilled('hal_surat', 'Hal Surat tidak boleh kosong!');
+                    let tanggalSurat = checkIsFilled('tanggal_surat', 'Tanggal Surat tidak boleh kosong!');
+                    let tanggalDiterima = checkIsFilled('tanggal_diterima', 'Tanggal Diterima tidak boleh kosong!');
+                    let fileSurat = true;
+                    if (action && action === 'add') {
+                        fileSurat = checkIsFilled('file_surat', 'File Surat tidak boleh kosong!');
+                    }
+
+                    if (nomorAgenda && nomorSurat && kodeSurat && sifatSurat && asalSurat && halSurat && tanggalSurat && tanggalDiterima && fileSurat) {
+                        $("#form-edit-surat").data('submitted', true);
+
+                        modal.modal('hide');
+                        swal({
+                            title: 'Anda yakin ingin menyimpan perubahan?',
+                            type: 'warning',
+                            showCancelButton: true,
+                            focusConfirm: false,
+                            confirmButtonColor: '#2ba87e',
+                            cancelButtonColor: '#dc2625',
+                            confirmButtonText: 'Ya',
+                            cancelButtonText: 'Tidak',
+                            customClass: 'swal2-custom'
+                        }).then(result => {
+                            if (result.value) {
+                                
+                                let formData = new FormData($("#form-edit-surat")[0]);
+
+                                let disposisiData = [];
+                                let deletedDispositions = [];
+
+                                // Ambil data disposisi yang masih aktif (tidak tersembunyi)
+                                $("#dataDisposisi").find("tr:not(.deleted)").each(function () {
+                                    let dari = $(this).find("td:nth-child(2)").text().trim(); // Kolom 'Dari'
+                                    let tujuan = $(this).find("td:nth-child(3)").text().trim(); // Kolom 'Tujuan Disposisi'
+                                    let tanggalDisposisi = $(this).find("td:nth-child(4)").text().trim(); // Kolom 'Tanggal Disposisi'
+                                    let catatan = $(this).find(".catatan-disposisi").val(); // Input catatan
+
+                                    // Format tanggal menggunakan Moment.js
+                                    let formattedDate = formatDateWithMoment(tanggalDisposisi);
+
+                                    // Push data ke array
+                                    disposisiData.push({
+                                        disposed_by: dari,
+                                        disposed_to: tujuan,
+                                        tgl_disposisi: formattedDate,
+                                        catatan: catatan
+                                    });
+                                });
+
+                                // Ambil ID disposisi yang dihapus
+                                $("#dataDisposisi").find("tr.deleted").each(function () {
+                                    let disposisiId = $(this).find(".delete-dispo").attr("data-id");
+                                    if (disposisiId) {
+                                        deletedDispositions.push(disposisiId);
+                                    }
+                                });
+
+                                // Ubah format tanggal sebelum dikirim ke server
+                                let tanggalSurat = formatDateWithMoment($("#tanggal_surat").val());
+                                let tanggalDiterima = formatDateWithMoment($("#tanggal_diterima").val());
+
+                                // Tambahkan data tanggal yang sudah diformat
+                                formData.set("tgl_surat", tanggalSurat);
+                                formData.set("tgl_diterima", tanggalDiterima);
+
+                                // Tambahkan disposisi baru ke FormData
+                                formData.append("disposisi", JSON.stringify(disposisiData));
+                                formData.append("deleted_disposisi", JSON.stringify(deletedDispositions));
+
+                                console.log(formData)
+
+                                $.ajax({
+                                    type: 'ajax',
+                                    url: $("#form-edit-surat").attr('action'),
+                                    method: $("#form-edit-surat").attr('method'), 
+                                    data: formData,
+                                    contentType: false, // Harus false agar FormData bisa mengirim file
+                                    processData: false, // Harus false agar FormData tidak diproses sebagai string
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        if (response.status === "error") {
                                             swal({
-                                                title: 'Error!',
-                                                text: 'Terjadi kesalahan, coba lagi!',
-                                                type: 'error',
-                                                confirmButtonColor: '#dc2625',
+                                                    title: 'Error!',
+                                                    text: response.message,
+                                                    type: 'error',
+                                                    confirmButtonColor: '#dc2625',
+                                                    confirmButtonText: 'Oke'
+                                                });
+                                        } else if (response.status === "success") {
+                                            swal({
+                                                title: 'Berhasil!',
+                                                text: response.message,
+                                                type: 'success',
+                                                confirmButtonColor: '#2ba87e',
                                                 confirmButtonText: 'Oke'
+                                            }).then(() => {
+                                                window.location.href = '<?= BASE_URL . 'v2/transaksi/surat-masuk' ?>'; 
                                             });
                                         }
-                                    });
-                                }
-                            });
-                        }
+                                    },
+                                    error: function() {
+                                        swal({
+                                            title: 'Error!',
+                                            text: 'Terjadi kesalahan, coba lagi!',
+                                            type: 'error',
+                                            confirmButtonColor: '#dc2625',
+                                            confirmButtonText: 'Oke'
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
 
                 function loadEditData(suratId) {
-                    // populateListKode();
-                    // populateListPegawai();
-                    initialLoadSelectElement();
-
                     $.ajax({
                         url: '<?= BASE_URL . 'v2/transaksi/surat-masuk/detail/'; ?>' + suratId,
                         type: "POST",
@@ -752,17 +804,19 @@
                         success: function (response) {
                             let existsKode = kodeKlasifikasi.some(item => item.text == response.surat.kode)
                             
-                            $("#nomor-agenda").val(response.surat.no_agenda);
-                            $("#nomor-surat").val(response.surat.no_surat);
-                            $("#lampiran-surat").val(response.surat.lampiran);
+                            $("#id_surat").val(response.surat.id_surat);
+                            $("#nomor_agenda").val(response.surat.no_agenda);
+                            $("#nomor_surat").val(response.surat.no_surat);
+                            $("#lampiran_surat").val(response.surat.lampiran);
                             setTimeout(() => {
-                                $('#kode-surat').val(existsKode ? response.surat.kode : null).trigger('change');
-                                $('#sifat-surat').val(response.surat.sifat ?? null).trigger('change');
-                            }, 200);
-                            $("#asal-surat").val(response.surat.asal_surat);
-                            $("#hal-surat").val(response.surat.isi);
-                            $("#tanggal-surat").val(moment(response.surat.tgl_surat).format("DD MMMM YYYY"));
-                            $("#tanggal-diterima").val(moment(response.surat.tgl_diterima).format("DD MMMM YYYY"));
+                                $('#kode_surat').val(existsKode ? response.surat.kode : null).trigger('change');
+                                $('#sifat_surat').val(response.surat.sifat ?? null).trigger('change');
+                            }, 100);
+                            $("#asal_surat").val(response.surat.asal_surat);
+                            $("#hal_surat").val(response.surat.isi);
+                            $("#tanggal_surat").val(moment(response.surat.tgl_surat).format("DD MMMM YYYY"));
+                            $("#tanggal_diterima").val(moment(response.surat.tgl_diterima).format("DD MMMM YYYY"));
+                            $("#prev_file_surat").val(response.surat.file);
 
                             // Kosongkan daftar disposisi sebelum mengisi ulang
                             tbodyDisposition.empty();
@@ -772,9 +826,9 @@
                                 let row = `
                                     <tr>
                                         <td class="text-center seq-no">${index + 1}</td>
-                                        <td>${item.disposed_by}</td>
-                                        <td>${item.disposed_to}</td>
-                                        <td>${moment(item.tgl_disposisi).format("DD MMMM YYYY")}</td>
+                                        <td class="text-center">${item.disposed_by}</td>
+                                        <td class="text-center">${item.disposed_to}</td>
+                                        <td class="text-center">${moment(item.tgl_disposisi).format("DD MMMM YYYY")}</td>
                                         <td>
                                             <input type="text" class="form-control catatan-disposisi" name="catatan_disposisi[]" value="${item.catatan}" autocomplete="off">
                                         </td>
@@ -806,8 +860,17 @@
                 function checkIsFilled(id, errorMsg) {
                     let isFilled = true;
                     let element = $(`#${id}`);
+
+                    $(`#${id}_error`).remove();
+
                     if (!element.val()) {
-                        element.after(`<small class="text-danger ps-1" id="${id}_error">${errorMsg}</small>`);
+                        let errorElement = `<small class="text-danger ps-1" id="${id}_error">${errorMsg}</small>`;
+                        if (element.hasClass('select2-hidden-accessible')) {
+                            element.next('.select2').after(errorElement); // Tambahkan setelah elemen tampilan Select2
+                        } else {
+                            element.after(errorElement);
+                        }
+                        // element.after(`<small class="text-danger ps-1" id="${id}_error">${errorMsg}</small>`);
                         setTimeout(function () {
                             $(`#${id}_error`).fadeOut(300, function () {
                                 $(this).remove(); // Hapus setelah animasi selesai
@@ -818,64 +881,68 @@
                     return isFilled;
                 }
 
-                function validateEmail() {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    let valueEmail = $("#email").val().trim();
-
-                    $("#email_error").remove();
-
-                    if (!valueEmail || valueEmail === '-' || valueEmail === '0') {
-                        return true;
-                    }
-
-                    if (!emailRegex.test(valueEmail)) {
-                        $("#email").after(`<small class="text-danger ps-1" id="email_error">Penulisan email tidak valid!</small>`);
-
-                        setTimeout(function () {
-                            $("#email_error").fadeOut(300, function () {
-                                $(this).remove();
-                            });
-                        }, 3000);
-                        
-                        return false; 
-                    }
-
-                    return true; 
-                }
-
-                function validateNIP() {
-                    $('#nip').on('keypress', function(e) {
-                        var $this = $(this);
-                        var regex = new RegExp("^[0-9\b]+$");
+                function validateNomorSurat() {
+                    $('#nomor_surat').on('keypress', function(e) {
+                        var regex = new RegExp("^[a-zA-Z0-9\-./]+$"); // Hanya huruf, angka, -, ., /
                         var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
-                        // for 16 digit number only
-                        if ($this.val().length >= 18) {
+                        
+                        // Karakter pertama harus huruf atau angka
+                        if ($(this).val().length === 0 && !/^[a-zA-Z0-9]$/.test(str)) {
                             e.preventDefault();
                             return false;
                         }
-                        if (regex.test(str)) {
-                            currentNum = 56;
-                            return true;
+                        
+                        if (!regex.test(str)) {
+                            e.preventDefault();
+                            return false;
                         }
-                        e.preventDefault();
-                        return false;
                     });
 
-                    $('#nip').on('paste', function(e) {
+                    $('#nomor_surat').on('paste', function(e) {
                         e.preventDefault();
-                        var pastedText = (e.originalEvent || e).clipboardData.getData('text');
-                        var sanitizedText = pastedText.replace(/\D/g, ''); // Hanya angka
+                        var pasteData = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+                        var regex = /^[a-zA-Z0-9\-./]+$/; // Hanya huruf, angka, -, ., /
                         
-                        if (sanitizedText.length > 18) {
-                            sanitizedText = sanitizedText.substring(0, 18);
+                        if (!regex.test(pasteData)) {
+                            alert('Input mengandung karakter yang tidak diizinkan!');
+                            return false;
                         }
                         
-                        $(this).val(sanitizedText);
+                        // Bersihkan karakter yang tidak diizinkan sebelum menempelkan teks
+                        var sanitizedData = pasteData.replace(/[^a-zA-Z0-9\-./]/g, '');
+                        $(this).val(sanitizedData);
+                    });
+                }
+
+                function validateNumber() {
+                    $('#nomor_agenda').on('keypress', function(e) {
+                        var regex = new RegExp("^[0-9]+$"); // Hanya angka 0-9
+                        var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+                        
+                        if (!regex.test(str)) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    });
+
+                    $('#nomor_agenda').on('paste', function(e) {
+                        e.preventDefault();
+                        var pasteData = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+                        var regex = /^[0-9]+$/; // Hanya angka 0-9
+                        
+                        if (!regex.test(pasteData)) {
+                            alert('Input hanya boleh berisi angka!');
+                            return false;
+                        }
+                        
+                        // Bersihkan karakter yang tidak diizinkan sebelum menempelkan teks
+                        var sanitizedData = pasteData.replace(/[^0-9]/g, '');
+                        $(this).val(sanitizedData);
                     });
                 }
 
                 function initialLoadSelectElement() {
-                    $('#kode-surat').empty().select2({
+                    $('#kode_surat').empty().select2({
                         theme: 'bootstrap-5',
                         width: '100%',
                         placeholder: 'Tampilkan Data Kode',
@@ -896,7 +963,7 @@
                         },
                     });
 
-                    $('#sifat-surat').empty().select2({
+                    $('#sifat_surat').empty().select2({
                         theme: 'bootstrap-5',
                         width: '100%',
                         placeholder: 'Tampilkan Data Sifat',
@@ -922,7 +989,7 @@
                         },
                     });
 
-                    $('#disposisi-ke').empty().select2({
+                    $('#disposisi_ke').empty().select2({
                         theme: 'bootstrap-5',
                         width: '100%',
                         placeholder: 'Tampilkan Data Pegawai',
@@ -944,8 +1011,27 @@
                     });
                 }
 
+                function populateListYear() {
+                    $.ajax({
+                        type: 'post',
+                        url: base_url + 'v2/populate-list-tahun/',
+                        async: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            let tahun = response.listTahun;
+                            listTahun = tahun.map(item => ({
+                                id: item.tahun,
+                                text: item.tahun
+                            }));
+                        },
+                        error: function() {
+                            swal("Internal Server Error 500!", "Error!", "error");
+                        }
+                    });
+                }
+
                 function populateListKode(excludeCode = null) {
-                    let ajaxUrl = excludeCode ? ('<?= BASE_URL . 'v2/referensi/list-klasifikasi-all/'; ?>' + excludeCode) : '<?= BASE_URL . 'v2/referensi/list-klasifikasi-all'; ?>';
+                    let ajaxUrl = '<?= BASE_URL . 'v2/referensi/list-klasifikasi-all/0000'; ?>';
                     kodeKlasifikasi = []
                     $.ajax({
                         type: 'ajax',
@@ -983,6 +1069,19 @@
                     if (!dataPegawai.some(item => item.id === '')) {
                         dataPegawai.unshift({ id: '', text: 'Tampilkan Data Pegawai' });
                     }
+                }
+
+                function formatDateWithMoment(dateString) {
+                    if (!dateString) return "0000-00-00 00:00:00";
+
+                    moment.locale('id'); // Pastikan moment.js menggunakan locale Indonesia
+                    let date = moment(dateString, "DD MMMM YYYY", true); // Tambahkan true untuk strict parsing
+
+                    if (date.isValid()) {
+                        return date.format("YYYY-MM-DD 00:00:00");
+                    }
+
+                    return "0000-00-00 00:00:00"; // Jika tidak valid, kembalikan default
                 }
 
             });

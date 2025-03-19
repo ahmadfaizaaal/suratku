@@ -22,17 +22,27 @@ class M_Surat extends CI_Model
     public function getDataDisposisi($table, $column, $value) 
     {
         $query = $this->db->get_where($table, [$column => $value]);
-        $result = $query->result();
-        if (!empty($result) && $result->num_rows() > 0) {
-            return $result->result();
+        if ($query->num_rows() > 0) {
+            return $query->result();
         } else {
             return null;
         }
     }
 
-    public function getListSuratMasuk() 
+    public function checkIsExistSurat($table, $nomorSurat) {
+        $result = $this->db->get_where($table, ['no_surat' => $nomorSurat]);
+        if ($result->num_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getListSuratMasuk($tahun) 
     {
-        //$this->db->where("YEAR(tgl_surat)", 2025); //sementara
+        if ($tahun != 'all') {
+            $this->db->where("YEAR(tgl_surat)", $tahun);
+        }
         $this->db->order_by("tgl_surat", "DESC");
         $this->db->order_by("no_agenda", "DESC");
         $query = $this->db->get(TBL_SURAT_MASUK);
@@ -194,7 +204,7 @@ class M_Surat extends CI_Model
         }
     }
 
-    public function getListKlasifikasi($excludeCode = null)
+    public function getListKlasifikasi($excludeCode = null, $needLevel = true)
     {
         $query = "SELECT 
                     id_klasifikasi, 
@@ -205,8 +215,10 @@ class M_Surat extends CI_Model
                         WHEN kode NOT LIKE '%.%' THEN 1
                         ELSE LENGTH(kode) - LENGTH(REPLACE(kode, '.', '')) + 2
                     END AS level
-                FROM tbl_klasifikasi_new
-                HAVING level < 4";
+                FROM tbl_klasifikasi_new";
+        if ($needLevel) {
+            $query .= "HAVING level < 4";
+        }
         if (!empty($excludeCode)) {
             $query .= " AND kode != '$excludeCode'";
         }
@@ -263,6 +275,26 @@ class M_Surat extends CI_Model
         }
     }
 
+    public function insertDataSurat($table, $data)
+    {
+        $this->db->insert($table, $data);
+        if ($this->db->affected_rows() > 0) {
+            return $this->db->insert_id();
+        } else {
+            return false;
+        }
+    }
+
+    public function insertDataDisposisi($data)
+    {
+        $this->db->insert(TBL_DISPOSISI, $data);
+        if ($this->db->affected_rows() > 0) {
+            return $this->db->insert_id();
+        } else {
+            return false;
+        }
+    }
+
     public function insertDataKlasifikasi($data)
     {
         $this->db->insert(TBL_KLASIFIKASI, $data);
@@ -288,6 +320,17 @@ class M_Surat extends CI_Model
     {
         $this->db->where('id_klasifikasi', $idKlasifikasi);
         $this->db->delete(TBL_KLASIFIKASI);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteDataDisposisi($idDisposisi)
+    {
+        $this->db->where('id_disposisi', $idDisposisi);
+        $this->db->delete(TBL_DISPOSISI);
         if ($this->db->affected_rows() > 0) {
             return true;
         } else {

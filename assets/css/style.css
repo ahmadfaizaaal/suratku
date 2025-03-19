@@ -21551,6 +21551,10 @@ input[type=number]::-webkit-outer-spin-button {
   color: #6c757d !important;
 }
 
+.select2-container--bootstrap-5 .select2-results__option {
+  font-size: 13px !important; /* Untuk daftar dropdown */
+}
+
 .bootstrap-datetimepicker-widget {
   min-width: 300px !important;
   max-width: none !important;
@@ -21574,6 +21578,11 @@ input[type=number]::-webkit-outer-spin-button {
     background: #2ba87e !important;  /* Ganti dengan warna yang diinginkan */
     color: #ffffff !important;
     border-radius: 5px;  /* Tambahan efek rounded */
+}
+
+#pdf-viewer {
+  width: 100%;
+  height: 80vh; /* 80% dari tinggi viewport */
 }
 
 

@@ -78,7 +78,7 @@
                                 <div class="d-flex align-items-center justify-content-between">
                                     <h6 class="mb-0 fs-5 fw-bold text-success" id="subKlasifikasiLabel"></h6>
                                     <?php if ($this->session->userdata('role') == 1) : ?>
-                                    <a href="javascript:;" data="" class="btn btn-sm btn-success fs-7 align-items-center justify-content-center" id="btnAdd">
+                                    <a href="javascript:;" data="" class="btn btn-sm btn-success fs-7 align-items-center justify-content-center d-inline-flex" id="btnAdd">
                                         <i class="ti ti-plus me-1"></i> Tambah Data
                                     </a>
                                     <?php endif; ?>

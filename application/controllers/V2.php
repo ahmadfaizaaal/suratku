@@ -183,7 +183,8 @@ class V2 extends CI_Controller
                         load_page('pages/surat_masuk', SYS_NAME, $data);
                         break;
                     case "list":
-                        $data['surat'] = $this->surat->getListSuratMasuk();
+                        $tahun = $this->uri->segment(5) ?? (string) date('Y');
+                        $data['surat'] = $this->surat->getListSuratMasuk($tahun);
                         echo json_encode($data);
                         break;
                     case "detail":
@@ -191,6 +192,92 @@ class V2 extends CI_Controller
                         $data['surat'] = $this->surat->getDataSurat(TBL_SURAT_MASUK, 'id_surat', $idSurat);
                         $data['disposisi'] = $this->surat->getDataDisposisi(TBL_DISPOSISI, 'id_surat', $idSurat);
                         echo json_encode($data);
+                        break;
+                    case "save-changes":
+                        $executed = false;
+
+                        $actionType = $this->input->post('actionType') ?? "";
+                        $idSurat = $this->input->post('id_surat') ?? null;
+                        $param = array(
+                            'no_agenda'    => $this->input->post('nomor_agenda', true),
+                            'no_surat'     => $this->input->post('nomor_surat', true),
+                            'asal_surat'   => $this->input->post('asal_surat', true),
+                            'isi'          => $this->input->post('hal_surat', true),
+                            'kode'         => $this->input->post('kode_surat', true),
+                            'lampiran'     => $this->input->post('lampiran', true) ?? '-',
+                            'tgl_surat'    => $this->input->post('tgl_surat', true),
+                            'tgl_diterima' => $this->input->post('tgl_diterima', true),
+                            'file'         => $this->input->post('prev_file_surat', true),
+                            'sifat'        => $this->input->post('sifat_surat', true),
+                        );
+
+                        // Ambil data disposisi (dikirim dalam format JSON)
+                        $disposisi_data = json_decode($this->input->post('disposisi'), true);
+                        $deleted_disposisi = json_decode($this->input->post('deleted_disposisi'), true);
+                        
+                        // Debug: Cek apakah data masuk dengan benar
+                        // echo "<pre>"; print_r($disposisi_data); echo "</pre><br>";
+                        // echo "<pre>"; print_r($param); echo "</pre>";
+                        // die;
+
+                        if ($_FILES['file_surat']['name']) {
+                            $file = $this->uploadFile('file_surat', $param['file'], 'docs', $param['no_agenda'], $action, $param['isi']);
+                            $param['file'] = $file[1];
+                        }
+        
+                        $message = array('success' => '', 'error' => '');
+                        if ($actionType == 'add') {
+                            $message = array(
+                                'success' => 'Surat Masuk berhasil ditambahkan!',
+                                'error' => 'Gagal menambahkan data surat masuk'
+                            );
+                            $exist = $this->surat->checkIsExistSurat(TBL_SURAT_MASUK, $param['no_surat']);
+                            if (!$exist) {
+                                $idSurat = $this->surat->insertDataSurat(TBL_SURAT_MASUK, $param);
+                                $executed = !empty($idSurat) ? true : false;
+                            } else {
+                                $message['error'] = 'Nomor surat sudah digunakan!';
+                            }
+                        } else if ($actionType == 'edit') {
+                            $message = array(
+                                'success' => 'Data sub klasifikasi berhasil diperbarui!',
+                                'error' => 'Gagal memperbarui data sub klasifikasi!'
+                            );
+                            $exist = $this->surat->checkIsExistKlasifikasi(TBL_SURAT_MASUK, $param['kode']);
+                            if (!$exist) {
+                                $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
+                            } else {
+                                $message['error'] = 'Kode klasifikasi sudah ada!';
+                            }
+                        }
+        
+                        if ($executed) {
+                            if (!empty($disposisi_data)) {
+                                foreach ($disposisi_data as $row) {
+                                    $dataDisposisi = [
+                                        'id_surat'   => $idSurat,
+                                        'disposed_by'   => $row['disposed_by'],
+                                        'disposed_to'   => $row['disposed_to'],
+                                        'tgl_disposisi' => $row['tgl_disposisi'],
+                                        'catatan'       => $row['catatan'],
+                                        'status'        => '1',
+                                        'created_by'    => $this->session->userdata('id_user')
+                                    ];
+                                    $this->surat->insertDataDisposisi($dataDisposisi);
+                                }
+                            }
+                        
+                            // Hapus disposisi yang dihapus user
+                            if (!empty($deleted_disposisi)) {
+                                foreach ($deleted_disposisi as $id) {
+                                    $this->surat->deleteDataDisposisi($id);
+                                }
+                            }
+
+                            echo json_encode(['status' => 'success', 'message' => $message['success']]);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => $message['error']]);
+                        }
                         break;
                     default:
                         redirect(404);
@@ -321,7 +408,7 @@ class V2 extends CI_Controller
             case "list-klasifikasi-all":
                 $excludeCode = $this->uri->segment(4);
                 if (!empty($excludeCode)) {
-                    $data['klasifikasi'] = $this->surat->getListKlasifikasi($excludeCode);
+                    $data['klasifikasi'] = $excludeCode == '0000' ? $this->surat->getListKlasifikasi(null, false) : $this->surat->getListKlasifikasi($excludeCode);
                 } else {
                     $data['klasifikasi'] = $this->surat->getListKlasifikasi();
                 }
@@ -790,7 +877,7 @@ class V2 extends CI_Controller
         return $sifatSurat;
     }
 
-    public function uploadFile($fileName, $prevFileName, $fileTag, $id_user)
+    public function uploadFile($file, $prevFileName, $fileTag, $id_user, $menu = null, $fileName = null)
     {
         $upload_path = 'assets/';
         $fileTypes = array(
@@ -799,6 +886,7 @@ class V2 extends CI_Controller
             'sql' => 'sql'
         );
         $allowedType = '';
+        $prefix = '';
         switch ($fileTag) {
 			case "user":
 				$upload_path .= 'images/user';
@@ -809,8 +897,10 @@ class V2 extends CI_Controller
                 $allowedType = $fileTypes['images'];
 				break;
 			case "docs":
-                $upload_path .= 'uploads/docs';
+                $upload_path .= 'uploads/docs/' . $menu;
                 $allowedType = $fileTypes['docs'];
+                $prefix = substr($menu, 6) === 'masuk' ? 'SM' : 'SK';
+                $prefix .= '-' . $id_user . '-' . str_replace(' ', '_', substr($fileName, 0, 30));
 				break;
             case "institution":
                 $upload_path .= 'images/institution';
@@ -825,16 +915,20 @@ class V2 extends CI_Controller
 				break;
 		}
         
-        $file = $_FILES[$fileName]['name'];
+        $thisFile = $_FILES[$file]['name'];
         $new_fileName = '';
-        $date = date('Ymd-His');
-        $new_fileName = strtoupper($fileTag) . '-' . $id_user . '-' . $date;
+        $date = date('ymd_His');
+        if ($fileTag === 'docs') {
+            $new_fileName = strtoupper($fileTag) . '-' . $prefix . '-' . $date; //DOCS-SM-22-Nama_File-180325_214358
+        } else {
+            $new_fileName = strtoupper($fileTag) . '-' . $id_user . '-' . $date;
+        }
 
         if (!is_dir($upload_path)) {
             mkdir('./' . $upload_path, 0777, true);
         }
 
-        if ($file) {
+        if ($thisFile) {
             $config['allowed_types'] = $allowedType;
             $config['max_size'] = 2048;
             $config['upload_path'] = './' . $upload_path . '/';
@@ -843,9 +937,9 @@ class V2 extends CI_Controller
             $this->load->library('upload', $config);
             $this->upload->initialize($config);
 
-            if ($this->upload->do_upload($fileName)) {
+            if ($this->upload->do_upload($file)) {
                 $oldFile = './' . $upload_path . '/' . $prevFileName;
-                if ($prevFileName != 'default-image.png') {
+                if (!empty($prevFileName) && $prevFileName != 'default-image.png') {
                     unlink($oldFile);
                 }
                 $result = array($date, $new_fileName . $this->upload->data('file_ext'));
