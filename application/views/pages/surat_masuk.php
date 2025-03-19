@@ -595,7 +595,7 @@
                 //VIEW PDF FILE HANDLER
                 // $('.view-pdf').click(function () {
                 $(document).on('click', '.view-pdf', function() {
-                    let pdfUrl = $('.view-pdf').closest('tr').data('file') + "#zoom=page-fit&navpanes=0"; 
+                    let pdfUrl = $(this).closest('tr').data('file') + "#zoom=page-fit&navpanes=0"; 
                     PDFObject.embed(pdfUrl, "#pdf-viewer");
                     modalPdf.modal('show');
 
