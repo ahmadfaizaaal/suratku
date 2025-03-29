@@ -606,7 +606,7 @@
                         let pdfFile = $(this).closest('tr').data('file'); 
                         let pdfUrl = pdfFile.split('/').pop();
                         // window.open(pdfUrl, '_blank');
-                        window.open('<?= BASE_URL . 'v2/transaksi/surat-masuk/preview' ?>' + '?file=' + pdfUrl, '_blank');
+                        window.open('<?= BASE_URL . 'v2/transaksi/preview/in' ?>' + '?file=' + pdfUrl, '_blank');
                     } else {
                         let pdfUrl = $(this).closest('tr').data('file') + "#zoom=page-fit&navpanes=0";
                         PDFObject.embed(pdfUrl, "#pdf-viewer");

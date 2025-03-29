@@ -48,6 +48,16 @@ class M_Surat extends CI_Model
         $query = $this->db->get(TBL_SURAT_MASUK);
         return $query->result();
     }
+
+    public function getListSuratMasukByRange($startDate, $endDate) 
+    {
+        $this->db->where("tgl_surat >=", $startDate);
+        $this->db->where("tgl_surat <=", $endDate);
+        $this->db->order_by("tgl_diterima", "ASC");
+        $this->db->order_by("no_agenda", "DESC");
+        $query = $this->db->get(TBL_SURAT_MASUK);
+        return $query->result();
+    }
     
     public function getListSuratKeluar() 
     {

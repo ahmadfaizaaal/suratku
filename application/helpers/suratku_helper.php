@@ -110,7 +110,7 @@ if (!function_exists('load_page')) {
 }
 
 if (!function_exists('export_pdf')) {
-	function export_pdf($template, $filename, $paper_size = 'A4', $orientation = 'potrait', $is_download = true)
+	function export_pdf($template, $filename, $paper_size = 'A4', $orientation = 'portrait', $is_download = true)
 	{
 		global $CI;
 		$CI->load->library('dompdf_lib');
@@ -121,8 +121,8 @@ if (!function_exists('export_pdf')) {
 			$CI->dompdf_lib->stream($filename . '.pdf');
 		} else {
 			$output = $CI->dompdf_lib->output();
-			file_put_contents('./assets/pengajuan/temp/pdf/' . $filename . '.pdf', $output);
-			return './assets/pengajuan/temp/pdf/' . $filename . '.pdf';
+			file_put_contents('./assets/uploads/temps/pdf/' . $filename . '.pdf', $output);
+			return './assets/uploads/temps/pdf/' . $filename . '.pdf';
 		}
 	}
 }
@@ -130,38 +130,43 @@ if (!function_exists('export_pdf')) {
 if (!function_exists('tgl_indo')) {
 	function tgl_indo($tanggal, $cetak_hari = false)
 	{
-		$hari = array(
-			1 =>    'Senin',
-			'Selasa',
-			'Rabu',
-			'Kamis',
-			'Jumat',
-			'Sabtu',
-			'Minggu'
-		);
+		// $hari = array(
+		// 	1 =>    'Senin',
+		// 	'Selasa',
+		// 	'Rabu',
+		// 	'Kamis',
+		// 	'Jumat',
+		// 	'Sabtu',
+		// 	'Minggu'
+		// );
 
-		$bulan = array(
-			1 =>   'Januari',
-			'Februari',
-			'Maret',
-			'April',
-			'Mei',
-			'Juni',
-			'Juli',
-			'Agustus',
-			'September',
-			'Oktober',
-			'November',
-			'Desember'
-		);
-		$split 	  = explode('-', $tanggal);
-		$tgl_indo = $split[0] . ' ' . $bulan[(int)$split[1]] . ' ' . $split[2];
+		// $bulan = array(
+		// 	1 =>   'Januari',
+		// 	'Februari',
+		// 	'Maret',
+		// 	'April',
+		// 	'Mei',
+		// 	'Juni',
+		// 	'Juli',
+		// 	'Agustus',
+		// 	'September',
+		// 	'Oktober',
+		// 	'November',
+		// 	'Desember'
+		// );
 
-		if ($cetak_hari) {
-			$num = date('N', strtotime($tanggal));
-			return $hari[$num] . ', ' . $tgl_indo;
-		}
-		return $tgl_indo;
+		setlocale(LC_TIME, 'id_ID.UTF-8', 'id_ID', 'Indonesian', 'Indonesia');
+		$date = new DateTime($tanggal); // Ubah dengan tanggal yang ingin diformat
+		$formattedDate = strftime('%d %B %Y', $date->getTimestamp());
+
+		// $split 	  = explode('-', $tanggal);
+		// $tgl_indo = $split[0] . ' ' . $bulan[(int)$split[1]] . ' ' . $split[2];
+
+		// if ($cetak_hari) {
+		// 	$num = date('N', strtotime($tanggal));
+		// 	return $hari[$num] . ', ' . $tgl_indo;
+		// }
+		return $formattedDate;
 	}
 }
 

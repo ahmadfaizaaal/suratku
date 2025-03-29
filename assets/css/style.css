@@ -21558,7 +21558,7 @@ input[type=number]::-webkit-outer-spin-button {
 .bootstrap-datetimepicker-widget {
   min-width: 300px !important;
   max-width: none !important;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .bootstrap-datetimepicker-widget .datepicker tbody tr > td.day.today {
@@ -21580,11 +21580,80 @@ input[type=number]::-webkit-outer-spin-button {
     border-radius: 5px;  /* Tambahan efek rounded */
 }
 
+.bootstrap-datetimepicker-widget .dropdown-menu .datepicker-months table tbody {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 kolom */
+  gap: 5px;
+}
+
+.bootstrap-datetimepicker-widget .dropdown-menu .datepicker-months td {
+  text-align: center;
+  padding: 10px;
+}
+
+.bootstrap-datetimepicker-widget .datepicker-months td span.active {
+  background-color: #2ba87e !important;
+  color: #ffffff !important;
+  border-radius: 5px;
+}
+
+.bootstrap-datetimepicker-widget .datepicker-years td span.active {
+  background-color: #2ba87e !important;
+  color: #ffffff !important;
+  border-radius: 5px;
+}
+
+
 #pdf-viewer {
   width: 100%;
   height: 80vh; /* 80% dari tinggi viewport */
 }
 
+/* Mengubah warna latar belakang predefined range yang dipilih */
+.daterangepicker .ranges li.active {
+  background-color: #2ba87e !important;
+  color: white !important;
+}
+
+/* Mengubah warna start date dan end date */
+.daterangepicker td.active, 
+.daterangepicker td.start-date, 
+.daterangepicker td.end-date {
+  background-color: #2ba87e !important;
+  color: white !important;
+  position: relative;
+  z-index: 2; /* Meningkatkan prioritas tampilan */
+  /*border-radius: 50% !important; /* Agar lebih terlihat bulat */
+}
+
+/* Mengubah warna tanggal dalam rentang yang dipilih */
+.daterangepicker td.in-range:not(.end-date) {
+  background-color: rgba(43, 168, 126, 0.3) !important;
+  color: black !important;
+}
+
+/* Tombol X menyatu dengan input */
+.clear-date-btn {
+  border-left: none;
+  border-radius: 0 8px 8px 0; /* Agar sisi kiri menyatu */
+  background-color: white; /* Warna awal */
+  color: white; /* Agar tidak terlihat saat kosong */
+  padding: 0 15px;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+/* Saat ada input, tombol menjadi aktif */
+.clear-date-btn.active {
+  color: black; /* Warna tombol saat ada tanggal */
+  background-color: #f8f9fa; /* Warna agar tampak menyatu */
+  border-left: 1px solid #ced4da; /* Tambahkan garis antara input dan tombol */
+}
+
+/* Hilangkan efek hover */
+.clear-date-btn:hover {
+  background-color: #f8f9fa;
+  color: black;
+}
 
 
 /**  =====================

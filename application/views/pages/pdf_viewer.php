@@ -7,10 +7,10 @@
     <link rel="icon" href="<?= BASE_THEME; ?>images/suratku-icon.png" type="image/x-icon">
 </head>
 <body>
-    <iframe src="<?= base_url("v2/get-file/$action?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0'; ?>" style="width: 100%; height: 95vh; border: none;"></iframe>
+    <!-- <iframe src="<?= base_url("v2/get-file/$actionType?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0'; ?>" style="width: 100%; height: 95vh; border: none;"></iframe> -->
     <!-- <iframe src="<?= $file; ?>" style="width: 100%; height: 95vh; border: none;"></iframe> -->
-    <!-- <script>
-        window.location.href = "<?= base_url("v2/get-file/$action?file=" . urlencode($fileName)); ?>";
-    </script> -->
+    <script>
+        window.location.href = "<?= base_url("v2/get-file/$actionType?file=" . urlencode($fileName)); ?>#zoom=page-fit&navpanes=0";
+    </script>
 </body>
 </html>

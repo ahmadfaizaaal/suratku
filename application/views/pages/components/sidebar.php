@@ -67,7 +67,7 @@
                                     <a href="javascript:;" class="pc-link">Surat Masuk<span class="pc-arrow"><i data-feather="chevron-right"></i></span></a>
                                     <ul class="pc-submenu">
                                         <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/transaksi/surat-masuk' ?>">Daftar Surat</a></li>
-                                        <li class="pc-item"><a class="pc-link" href="#!">Cetak Laporan</a></li>
+                                        <li class="pc-item"><a class="pc-link" href="<?= BASE_URL . 'v2/transaksi/cetak/surat-masuk' ?>">Cetak Laporan</a></li>
                                         <li class="pc-item"><a class="pc-link" href="#!">File Surat</a></li>
                                     </ul>
                                 </li>

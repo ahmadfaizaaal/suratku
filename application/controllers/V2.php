@@ -187,6 +187,28 @@ class V2 extends CI_Controller
                         $data['surat'] = $this->surat->getListSuratMasuk($tahun);
                         echo json_encode($data);
                         break;
+                    case "list-by-range":
+                        $startDate = $this->input->post('startDate') ?? date('Y-m-d');
+                        $endDate = $this->input->post('endDate') ?? date('Y-m-d');
+                        $data['surat'] = $this->surat->getListSuratMasukByRange($startDate, $endDate);
+                        echo json_encode($data);
+                        break;
+                    case "print-by-range":
+                        $startDate = $this->input->post('startDate') ?? date('Y-m-d');
+                        $endDate = $this->input->post('endDate') ?? date('Y-m-d');
+                        
+                        $data['title'] = 'CETAK SURAT MASUK';
+                        $data['surat'] = $this->surat->getListSuratMasukByRange($startDate, $endDate);
+                        $data['typeOfSurat'] = 'MASUK';
+                        $data['instansi'] = $this->initiateInstitutionDescData();
+                        $data['dateRange'] = $this->input->post('dateRange') ?? null;
+
+                        $html = $this->load->view('pages/preview_for_print_surat', $data, TRUE);
+                        $fileName = export_pdf($html, 'print-SM-' . $startDate . '_' . $endDate , 'A4', 'portrait', FALSE);
+                        header('Content-Type: application/json');
+
+                        echo json_encode(BASE_URL . $fileName);
+                        break;
                     case "detail":
                         $idSurat = $this->uri->segment(5);
                         $data['surat'] = $this->surat->getDataSurat(TBL_SURAT_MASUK, 'id_surat', $idSurat);
@@ -214,14 +236,6 @@ class V2 extends CI_Controller
                         // Ambil data disposisi (dikirim dalam format JSON)
                         $disposisi_data = json_decode($this->input->post('disposisi'), true);
                         $deleted_disposisi = json_decode($this->input->post('deleted_disposisi'), true);
-                        
-                        // Debug: Cek apakah data masuk dengan benar
-                        // echo "<pre>" . $idSurat; echo "</pre><br>";
-                        // echo "<pre>" . $actionType; echo "</pre><br>";
-                        // echo "<pre>"; print_r($disposisi_data); echo "</pre><br>";
-                        // echo "<pre>"; print_r($deleted_disposisi); echo "</pre><br>";
-                        // echo "<pre>"; print_r($param); echo "</pre>";
-                        // die;
 
                         if ($_FILES['file_surat']['name']) {
                             $file = $this->uploadFile('file_surat', $param['file'], 'docs', $param['no_agenda'], $action, $param['isi']);
@@ -310,19 +324,30 @@ class V2 extends CI_Controller
                             }
                         }
                         break;
-                    case "preview":
-                        $fileName = $this->input->get('file');
-                        $filePath = './assets/uploads/docs/' . $action . '/' . $fileName;
-                        if (!file_exists($filePath)) {
-                            show_404();
-                            return;
+                    case "delete-temp-files":
+                        $filePath = $this->input->post('filePath');
+                        $fullPath = FCPATH . str_replace(BASE_URL, '', $filePath);
+                        
+                        if ($filePath && file_exists($fullPath)) {
+                            unlink($fullPath);
+                            echo json_encode(["status" => "success", "message" => "File deleted"]);
+                        } else {
+                            echo json_encode(["status" => "error", "message" => "File not found"]);
                         }
-                        $data['title'] = SYS_NAME;
-                        $data['action'] = $action;
-                        $data['fileName'] = $fileName;
-                        $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0';
-                        $this->load->view("pages/pdf_viewer", $data);
                         break;
+                    // case "preview":
+                    //     $fileName = $this->input->get('file');
+                    //     $filePath = './assets/uploads/docs/' . $action . '/' . $fileName;
+                    //     if (!file_exists($filePath)) {
+                    //         show_404();
+                    //         return;
+                    //     }
+                    //     $data['title'] = SYS_NAME;
+                    //     $data['action'] = $action;
+                    //     $data['fileName'] = $fileName;
+                    //     $data['file'] = base_url("v2/get-file/$action?file=" . urlencode($fileName)) . '#zoom=page-fit&navpanes=0';
+                    //     $this->load->view("pages/pdf_viewer", $data);
+                    //     break;
                     default:
                         redirect(404);
                         break;
@@ -344,91 +369,106 @@ class V2 extends CI_Controller
                         break;
                 }
                 break;
+            case "preview":
+                $fileName = $this->input->get('file');
+                $data['title'] = SYS_NAME;
+                $data['actionType'] = $this->uri->segment(4) ?? null;
+                $data['fileName'] = $fileName;
+                $this->load->view("pages/pdf_viewer", $data);
+                break;
+            case "cetak":
+                $urlParam = $this->uri->segment(4) ?? null;
+                $data = $this->initiateUserProfileData();  
+                // $actionType = ($urlParam === 'in') 
+                //             ? 'surat-masuk' 
+                //             : (($urlParam === 'out') ? 'surat-keluar' : null);                      
+                load_page('pages/cetak_surat_masuk', SYS_NAME, $data);
+                break;
 			case "list-pegawai":
                 $data['pegawai'] = $this->user->getListUsers('orderBy', array('column' => 'nama', 'value' => 'ASC'));
                 echo json_encode($data);
                 break;
-            case "get-detail":
-                $idKlasifikasi = $this->uri->segment(4);
-                $data['klasifikasi'] = $this->surat->getDetailKlasifikasi($idKlasifikasi);
-                echo json_encode($data);
-                break;
-            case "child-availability":
-                $kode = $this->uri->segment(4);
-                $child = $this->surat->getChildKlasifikasi($kode);
-                if (!empty($child)) {
-                    $data['hasChild'] = true;
-                    $data['child'] = $child;
-                } else {
-                    $data['hasChild'] = false;
-                }
-                echo json_encode($data);
-                break;
-            case "delete":
-                $param = $this->input->post('param');
-                if (!empty($param)) {
-                    if (is_array($param)) {
-                        foreach ($param as $obj) {
-                            $deleted = $this->surat->deleteDataKlasifikasi($obj['id_klasifikasi']);
-                        }
-                    } else {
-                        $deleted = $this->surat->deleteDataKlasifikasi($param);
-                    }
+            // case "get-detail":
+            //     $idKlasifikasi = $this->uri->segment(4);
+            //     $data['klasifikasi'] = $this->surat->getDetailKlasifikasi($idKlasifikasi);
+            //     echo json_encode($data);
+            //     break;
+            // case "child-availability":
+            //     $kode = $this->uri->segment(4);
+            //     $child = $this->surat->getChildKlasifikasi($kode);
+            //     if (!empty($child)) {
+            //         $data['hasChild'] = true;
+            //         $data['child'] = $child;
+            //     } else {
+            //         $data['hasChild'] = false;
+            //     }
+            //     echo json_encode($data);
+            //     break;
+            // case "delete":
+            //     $param = $this->input->post('param');
+            //     if (!empty($param)) {
+            //         if (is_array($param)) {
+            //             foreach ($param as $obj) {
+            //                 $deleted = $this->surat->deleteDataKlasifikasi($obj['id_klasifikasi']);
+            //             }
+            //         } else {
+            //             $deleted = $this->surat->deleteDataKlasifikasi($param);
+            //         }
 
-                    if ($deleted) {
-                        echo json_encode(['status' => 'success', 'message' => 'Data klasifikasi berhasil dihapus!']);
-                    } else {
-                        echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data klasifikasi.']);
-                    }
-                }
-                break;
-            case "save-changes":
-                $executed = false;
-                $idKlasifikasi = $this->input->post('idKlasifikasi') ?? null;
-                $param = array(
-                    'id_user' => (int) $this->session->userdata('id_user'),
-                    'id_parent' => (int) $this->input->post('parent') ?? 0,
-                    'kode' => $this->input->post('first') . ($this->input->post('second') ?? ""),
-                    'nama' => $this->input->post('keterangan'),
-                    'uraian' => $this->input->post('uraian') ?? "",
-                    'status' => $this->input->post('status')
-                );
+            //         if ($deleted) {
+            //             echo json_encode(['status' => 'success', 'message' => 'Data klasifikasi berhasil dihapus!']);
+            //         } else {
+            //             echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus data klasifikasi.']);
+            //         }
+            //     }
+            //     break;
+            // case "save-changes":
+            //     $executed = false;
+            //     $idKlasifikasi = $this->input->post('idKlasifikasi') ?? null;
+            //     $param = array(
+            //         'id_user' => (int) $this->session->userdata('id_user'),
+            //         'id_parent' => (int) $this->input->post('parent') ?? 0,
+            //         'kode' => $this->input->post('first') . ($this->input->post('second') ?? ""),
+            //         'nama' => $this->input->post('keterangan'),
+            //         'uraian' => $this->input->post('uraian') ?? "",
+            //         'status' => $this->input->post('status')
+            //     );
 
-                $actionType = $this->input->post('actionType') ?? "";
-                $message = array(
-                    'success' => '',
-                    'error' => ''
-                );
-                if ($actionType == 'add') {
-                    $message = array(
-                        'success' => 'Data sub klasifikasi berhasil ditambahkan!',
-                        'error' => 'Gagal menambahkan data sub klasifikasi!'
-                    );
-                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
-                    if (!$exist) {
-                        $executed = $this->surat->insertDataKlasifikasi($param);
-                    } else {
-                        $message['error'] = 'Kode klasifikasi sudah ada!';
-                    }
-                } else if ($actionType == 'edit') {
-                    $message = array(
-                        'success' => 'Data sub klasifikasi berhasil diperbarui!',
-                        'error' => 'Gagal memperbarui data sub klasifikasi!'
-                    );
-                    $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
-                    if (!$exist) {
-                        $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
-                    } else {
-                        $message['error'] = 'Kode klasifikasi sudah ada!';
-                    }
-                }
+            //     $actionType = $this->input->post('actionType') ?? "";
+            //     $message = array(
+            //         'success' => '',
+            //         'error' => ''
+            //     );
+            //     if ($actionType == 'add') {
+            //         $message = array(
+            //             'success' => 'Data sub klasifikasi berhasil ditambahkan!',
+            //             'error' => 'Gagal menambahkan data sub klasifikasi!'
+            //         );
+            //         $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+            //         if (!$exist) {
+            //             $executed = $this->surat->insertDataKlasifikasi($param);
+            //         } else {
+            //             $message['error'] = 'Kode klasifikasi sudah ada!';
+            //         }
+            //     } else if ($actionType == 'edit') {
+            //         $message = array(
+            //             'success' => 'Data sub klasifikasi berhasil diperbarui!',
+            //             'error' => 'Gagal memperbarui data sub klasifikasi!'
+            //         );
+            //         $exist = $this->surat->checkIsExistKlasifikasi($param['kode']);
+            //         if (!$exist) {
+            //             $executed = $this->surat->updateDataKlasifikasi(array('column' => 'id_klasifikasi', 'value' => $idKlasifikasi), $param);
+            //         } else {
+            //             $message['error'] = 'Kode klasifikasi sudah ada!';
+            //         }
+            //     }
 
-                if ($executed) {
-                    echo json_encode(['status' => 'success', 'message' => $message['success']]);
-                } else {
-                    echo json_encode(['status' => 'error', 'message' => $message['error']]);
-                }
-                break;
+            //     if ($executed) {
+            //         echo json_encode(['status' => 'success', 'message' => $message['success']]);
+            //     } else {
+            //         echo json_encode(['status' => 'error', 'message' => $message['error']]);
+            //     }
+            //     break;
 			default:
 				redirect(404);
 				break;
@@ -1039,14 +1079,17 @@ class V2 extends CI_Controller
     //     $this->load->view("pages/pdf_viewer", $data);
     // }
 
-    public function get_file($action)
+    public function get_file($actionType)
     {
         if (!$this->session->userdata('username')) {
             redirect('v2');
         }
-        
+
+        $directory = ($actionType === 'in') 
+                    ? 'surat-masuk' 
+                    : (($actionType === 'out') ? 'surat-keluar' : null);
         $fileName = $this->input->get('file');
-        $filePath = FCPATH . "assets/uploads/docs/$action/" . $fileName;
+        $filePath = FCPATH . "assets/uploads/docs/$directory/" . $fileName;
 
         if (!file_exists($filePath)) {
             show_404();
