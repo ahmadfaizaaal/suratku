@@ -125,7 +125,7 @@ if (!function_exists('export_pdf')) {
 			file_put_contents($path . $filename . '.pdf', $output);
 
 			// file_put_contents('./assets/uploads/temps/pdf/' . $filename . '.pdf', $output);
-			return $path . $filename . '.pdf';
+			return './assets/uploads/temps/pdf/' . $filename . '.pdf';
 		}
 	}
 }
