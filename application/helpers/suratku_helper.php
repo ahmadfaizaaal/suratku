@@ -121,8 +121,11 @@ if (!function_exists('export_pdf')) {
 			$CI->dompdf_lib->stream($filename . '.pdf');
 		} else {
 			$output = $CI->dompdf_lib->output();
-			file_put_contents('./assets/uploads/temps/pdf/' . $filename . '.pdf', $output);
-			return './assets/uploads/temps/pdf/' . $filename . '.pdf';
+			$path = FCPATH . 'assets/uploads/temps/pdf/';
+			file_put_contents($path . $filename . '.pdf', $output);
+
+			// file_put_contents('./assets/uploads/temps/pdf/' . $filename . '.pdf', $output);
+			return $path . $filename . '.pdf';
 		}
 	}
 }
