@@ -1091,6 +1091,10 @@ class V2 extends CI_Controller
         $fileName = $this->input->get('file');
         $filePath = FCPATH . "assets/uploads/docs/$directory/" . $fileName;
 
+        if ($actionType === 'print') {
+            $filePath = FCPATH . "assets/uploads/temps/pdf/" . $fileName;
+        }
+
         if (!file_exists($filePath)) {
             show_404();
             return;

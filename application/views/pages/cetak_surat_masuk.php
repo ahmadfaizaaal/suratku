@@ -317,7 +317,21 @@
                                 let pdfFile = response; 
                                 let pdfUrl = pdfFile.split('/').pop();
                                 // window.open(pdfUrl, '_blank');
-                                window.open('<?= BASE_URL . 'v2/transaksi/preview/in' ?>' + '?file=' + pdfUrl, '_blank');
+                                window.open('<?= BASE_URL . 'v2/transaksi/preview/print' ?>' + '?file=' + pdfUrl, '_blank');
+
+                                setTimeout(() => {
+                                    $.ajax({
+                                        url: "<?= BASE_URL . 'v2/transaksi/surat-masuk/delete-temp-files' ?>",
+                                        type: "POST",
+                                        data: { filePath: response },
+                                        success: function (res) {
+                                            console.log("File temp berhasil dihapus di mobile");
+                                        },
+                                        error: function (err) {
+                                            console.error("Gagal menghapus file di mobile:", err);
+                                        }
+                                    });
+                                }, 3000);
                             } else {
                                 let pdfUrl = response + "#zoom=page-fit&navpanes=0";
                                 PDFObject.embed(pdfUrl, "#pdf-viewer");
