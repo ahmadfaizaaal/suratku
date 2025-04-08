@@ -158,7 +158,8 @@ if (!function_exists('tgl_indo')) {
 		// 	'Desember'
 		// );
 
-		setlocale(LC_TIME, 'id_ID.UTF-8', 'id_ID', 'Indonesian', 'Indonesia');
+		// setlocale(LC_TIME, 'id_ID.UTF-8', 'id_ID', 'Indonesian', 'Indonesia');
+		setlocale(LC_TIME, 'id_ID.utf8');
 		$date = new DateTime($tanggal); // Ubah dengan tanggal yang ingin diformat
 		$formattedDate = strftime('%d %B %Y', $date->getTimestamp());
 
